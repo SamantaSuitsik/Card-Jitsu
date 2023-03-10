@@ -9,7 +9,7 @@ public class Kaart {
         this.element = element;
     }
 
-    public void KaartValja(){
+    public void KaartString(){
         System.out.println("┌───────────┐");
         System.out.println("│"+" "+tugevusValja()+" ".repeat(8)+"│");
         System.out.println("│"+" "+elementvalja()[0] +" "+"│");
@@ -26,37 +26,47 @@ public class Kaart {
         else
             return String.valueOf(this.tugevus);
     }
+    public String[] kaartReturn(){
+        return new String[]{
+                "┌───────────┐",
+                "│" + " " + tugevusValja() + " ".repeat(8) + "│",
+                "│" + " " + elementvalja()[0] + " " + "│",
+                "│" + " " + elementvalja()[1] + " " + "│",
+                "│" + " " + elementvalja()[2] + " " + "│",
+                "│" + " " + elementvalja()[3] + " " + "│",
+                "│" + " " + elementvalja()[4] + " " + "│",
+                "└───────────┘",
+
+        };
+    }
 
     private String[] elementvalja() {
         if (Objects.equals(this.element, "tuli")) {
-            String[] uus = {
+            return new String[]{
                     "   |     ",
                     "| ||  |  ",
                     "|  ||  | ",
                     "|||||||| ",
                     " ||||||  ",
             };
-            return uus;
         }
         if (Objects.equals(this.element, "vesi")){
-            String[] uus = {
+            return new String[]{
                     "   /\\    ",
                     "  /  \\   ",
                     " /    \\  ",
                     "|      | ",
                     " \\____/  ",
             };
-            return uus;
         }
         if (Objects.equals(this.element, "ice")){
-            String[] uus = {
+            return new String[]{
                     " *  *  * ",
                     "  \\ | /  ",
                     "*===*===*",
                     "  / | \\  ",
                     " *  *  * ",
             };
-            return uus;
         }
         return new String[]{"a", "b"};
     }
