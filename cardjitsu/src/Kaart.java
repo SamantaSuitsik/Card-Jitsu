@@ -11,7 +11,7 @@ public class Kaart {
 
     public void KaartValja(){
         System.out.println("┌───────────┐");
-        System.out.println("│"+" ".repeat(2)+tugevus+" ".repeat(8)+"│");
+        System.out.println("│"+" "+tugevusValja()+" ".repeat(8)+"│");
         System.out.println("│"+" "+elementvalja()[0] +" "+"│");
         System.out.println("│"+" "+elementvalja()[1] +" "+"│");
         System.out.println("│"+" "+elementvalja()[2] +" "+"│");
@@ -19,6 +19,12 @@ public class Kaart {
         System.out.println("│"+" "+elementvalja()[4] +" "+"│");
         System.out.println("└───────────┘");
 
+    }
+    private String tugevusValja(){
+        if (this.tugevus < 10)
+            return (this.tugevus+" ");
+        else
+            return String.valueOf(this.tugevus);
     }
 
     private String[] elementvalja() {
