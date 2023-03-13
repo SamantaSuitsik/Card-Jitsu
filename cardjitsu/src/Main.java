@@ -7,5 +7,11 @@ public class Main {
         Kaart kaart5 = new Kaart(9, "vesi");
         Hand uuskasi = new Hand(new Kaart[]{kaart1, kaart2, kaart3, kaart4, kaart5});
         uuskasi.handValja();
+        for (int i = 0; i < 5; i++) {
+            int index = (int)(Math.random()*5);
+            uuskasi.mangiKaart(index);
+            uuskasi.handValja();
+        }
+
     }
 }

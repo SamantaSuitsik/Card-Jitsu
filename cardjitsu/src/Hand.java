@@ -17,5 +17,21 @@ public class Hand {
         }
     }
 
+    public Kaart uusKaart(){
+        int uustugevus = (int)(Math.random()*10);
+        int uuselement = (int)(Math.random()*3);
+        String[] elemendid = new String[]{"tuli", "vesi", "ice"};
+        return new Kaart(uustugevus, elemendid[uuselement]);
+    }
+
+    public Kaart mangiKaart(int index){
+        Kaart savekaart = this.kaardid[index];
+        for (int i = index; i < 4; i++) {
+            this.kaardid[i] = this.kaardid[i+1];
+        }
+        this.kaardid[4] = uusKaart();
+        return savekaart;
+    }
+
 
 }
