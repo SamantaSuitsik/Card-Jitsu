@@ -9,7 +9,7 @@ public class Kaart {
         this.element = element;
     }
 
-    public void KaartString(){
+    public void kaartString(){
         System.out.println("┌───────────┐");
         System.out.println("│"+" "+tugevusValja()+" ".repeat(8)+"│");
         System.out.println("│"+" "+elementvalja()[0] +" "+"│");
