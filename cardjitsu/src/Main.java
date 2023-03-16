@@ -3,6 +3,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         int kaik;
+        String valmis;
         boolean mangLabi = false;
         Scanner scanner = new Scanner(System.in);
         Kaart kaart1 = new Kaart(1, "ice");
@@ -14,7 +15,7 @@ public class Main {
         //teeme käe, millel on kaardikohad
         Hand kaes = new Hand();
         kaes.suvalisedKaardidKaes();
-        kaes.handValja();
+
         //uuskasi.handValja();
         /**
          for (int i = 0; i < 1; i++) {
@@ -24,14 +25,27 @@ public class Main {
          }
          **/
 
-        System.out.println("kuidas kaib");
+        System.out.println("Kuidas mängida?");
+        System.out.println("Mängijale on ette antud 5 kaarti, " +
+                "mille hulgast valitakse üks, mis käiakse välja. \nVastane (ehk arvuti) käib samal ajal oma kaardi." +
+                "\nÜhel kaardil on kindel tugevus (arv 2-st 12-ni) ja element (tuli, vesi või lumi). \nVälja käidud kaartidest võidab see, mis on elemendi või numbri poolest tugevam: ");
+        System.out.println("Tuli võidab lume,\nLumi võidab vee,\nVesi võidab tule.");
+        System.out.println("Kui käidud kaartidel on sama element võidab see, kelle kaardil on suurem number. \nKui number ja element on mõlemal samad, " +
+                "siis on tegemist viigiga.");
+        System.out.println("Peale käiku antakse võitjale tema käidud kaart tagasi, " +
+                "mis läheb võidetud kaartide komplekti. " +
+                "\nKui käik lõppes viigiga, ei saa kumbki mängija kaarti." +
+                "\nMängija, kes saab esimesena komplektis kokku nii tule, vee kui ka lume elemendiga kaardid, on võitnud.");
+        System.out.println();
+
         while (!mangLabi) {
-            System.out.println("siin on sinu kasi");
-            System.out.println("mitmendat kaarti vasakult soovid kaia: ");
+            System.out.println("Siin on sinu kaardid: ");
+            kaes.handValja();
+            System.out.println("Vali, mitmendat kaarti vasakult soovid käia: ");
             kaik = scanner.nextInt();
-            System.out.println("Kaisid kaardi:");
+            System.out.println("Käisid kaardi:");
             kaes.mangiKaart(kaik - 1).kaartString();
-            System.out.println("Vastane kais kaardi");
+            System.out.println("Vastane käis kaardi: ");
             kaes.uusKaart().kaartString();
 
             /**
