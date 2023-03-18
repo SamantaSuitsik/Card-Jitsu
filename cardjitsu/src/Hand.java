@@ -24,7 +24,7 @@ public class Hand {
     public Kaart uusKaart(){
         int uustugevus = (int)(Math.random()*11+2);
         int uuselement = (int)(Math.random()*3);
-        String[] elemendid = new String[]{"tuli", "vesi", "ice"};
+        String[] elemendid = new String[]{"tuli", "vesi", "lumi"};
         return new Kaart(uustugevus, elemendid[uuselement]);
     }
 

@@ -1,6 +1,6 @@
 import java.util.Objects;
 
-public class Kaart {
+public class Kaart implements Comparable<Kaart>{
     private int tugevus;
     private String element;
 
@@ -59,7 +59,7 @@ public class Kaart {
                     " \\____/  ",
             };
         }
-        if (Objects.equals(this.element, "ice")){
+        if (Objects.equals(this.element, "lumi")){
             return new String[]{
                     " *  *  * ",
                     "  \\ | /  ",
@@ -69,6 +69,38 @@ public class Kaart {
             };
         }
         return new String[]{"a", "b"};
+    }
+
+    @Override
+    public int compareTo(Kaart o) {
+        if (Objects.equals(this.element, o.element)) {
+            return this.tugevus - o.tugevus;
+        }
+        else {
+            switch (this.element) {
+                case "tuli" -> {
+                    if (Objects.equals(o.element, "lumi"))
+                        return 1;
+                    else
+                        return -1;
+                }
+                case "vesi" -> {
+                    if (Objects.equals(o.element, "tuli"))
+                        return 1;
+                    else
+                        return -1;
+                }
+                case "lumi" -> {
+                    if (Objects.equals(o.element, "vesi"))
+                        return 1;
+                    else
+                        return -1;
+                }
+                default -> {
+                    return 0;
+                }
+            }
+        }
     }
 
     public int getTugevus() {
@@ -86,4 +118,6 @@ public class Kaart {
     public void setType(String element) {
         this.element = element;
     }
+
+
 }
