@@ -1,5 +1,5 @@
 public class Hand {
-    private Kaart[] kaardid;
+    private final Kaart[] kaardid;
 
     public Hand(Kaart[] kaardid) {
         this.kaardid = kaardid;

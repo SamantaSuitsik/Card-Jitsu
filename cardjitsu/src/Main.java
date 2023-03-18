@@ -5,9 +5,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         int kaik;
         boolean mangLabi = false;
-        String tuleemoji = "\uD83D\uDD25";
-        String veeemoji = "\uD83D\uDCA7";
-        String lumeemoji = "\uD83C\uDF28";
+
         Scanner scanner = new Scanner(System.in);
         HashMap<String, Integer> mangijadict = new HashMap<>();
         mangijadict.put("tuli", 0);
@@ -17,36 +15,25 @@ public class Main {
         vastanedict.put("tuli", 0);
         vastanedict.put("vesi", 0);
         vastanedict.put("lumi", 0);
-//        Kaart kaart1 = new Kaart(1, "lumi");
-//        Kaart kaart2 = new Kaart(3, "tuli");
-//        Kaart kaart3 = new Kaart(40, "vesi");
-//        Kaart kaart4 = new Kaart(12, "lumi");
-//        Kaart kaart5 = new Kaart(9, "vesi");
-//        Hand uuskasi = new Hand(new Kaart[]{kaart1, kaart2, kaart3, kaart4, kaart5});
+
         //teeme käe, millel on kaardikohad
         Hand kaes = new Hand();
         kaes.suvalisedKaardidKaes();
 
-        //uuskasi.handValja();
-        /**
-         for (int i = 0; i < 1; i++) {
-         int index = (int)(Math.random()*5);
-         uuskasi.mangiKaart(index).kaartString();
-         uuskasi.handValja();
-         }
-         **/
 
         System.out.println("Kuidas mängida?");
-        System.out.println("Mängijale on ette antud 5 kaarti, " +
-                "mille hulgast valitakse üks, mis käiakse välja. \nVastane (ehk arvuti) käib samal ajal oma kaardi." +
-                "\nÜhel kaardil on kindel tugevus (arv 2-st 12-ni) ja element (tuli, vesi või lumi). \nVälja käidud kaartidest võidab see, mis on elemendi või numbri poolest tugevam: ");
+        System.out.println("""
+                Mängijale on ette antud 5 kaarti, mille hulgast valitakse üks, mis käiakse välja.\s
+                Vastane (ehk arvuti) käib samal ajal oma kaardi.
+                Ühel kaardil on kindel tugevus (arv 2-st 12-ni) ja element (tuli, vesi või lumi).\s
+                Välja käidud kaartidest võidab see, mis on elemendi või numbri poolest tugevam:\s""");
         System.out.println("Tuli võidab lume,\nLumi võidab vee,\nVesi võidab tule.");
         System.out.println("Kui käidud kaartidel on sama element võidab see, kelle kaardil on suurem number. \nKui number ja element on mõlemal samad, " +
                 "siis on tegemist viigiga.");
-        System.out.println("Peale käiku antakse võitjale tema käidud kaart tagasi, " +
-                "mis läheb võidetud kaartide komplekti. " +
-                "\nKui käik lõppes viigiga, ei saa kumbki mängija kaarti." +
-                "\nMängija, kes saab esimesena komplektis kokku nii tule, vee kui ka lume elemendiga kaardid, on võitnud.");
+        System.out.println("""
+                Peale käiku antakse võitjale tema käidud kaart tagasi, mis läheb võidetud kaartide komplekti.\s
+                Kui käik lõppes viigiga, ei saa kumbki mängija kaarti.
+                Mängija, kes saab esimesena komplektis kokku nii tule, vee kui ka lume elemendiga kaardid, on võitnud.""");
         System.out.println();
 
         while (!mangLabi) {
@@ -101,27 +88,15 @@ public class Main {
                 mangLabi = true;
             }
 
-//            System.out.println("\uD83D\uDD25"); // Tule emoji
-//            System.out.println("\uD83D\uDCA7"); // vee emoji
-//            System.out.println("\uD83C\uDF28"); // lumi emoji
-//
-//            mangLabi = true;
         }
-        /**
-        if (voitja == mangija)
-            System.out.println("SA VOITSID!");
-        else
-            System.out.println("Sa kaotasid!");
-         **/
+
     }
 
     public static boolean kasVoidetud(HashMap asi){
         int tuli = (int)asi.get("tuli");
         int vesi = (int)asi.get("vesi");
         int lumi = (int)asi.get("lumi");
-        if ((tuli>0 && vesi>0 && lumi>0)|| tuli>2 || vesi>2 || lumi>2)
-            return true;
-        return false;
+        return (tuli > 0 && vesi > 0 && lumi > 0) || tuli > 2 || vesi > 2 || lumi > 2;
     }
 
     public static void voiduKogus(HashMap dict){
