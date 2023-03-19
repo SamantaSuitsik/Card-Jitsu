@@ -16,9 +16,13 @@ public class Main {
         vastanedict.put("vesi", 0);
         vastanedict.put("lumi", 0);
 
+
         //teeme käe, millel on kaardikohad
-        Hand kaes = new Hand();
+        Kasi kaes = new Kasi();
         kaes.suvalisedKaardidKaes();
+        //Vastasele samamoodi
+        Vastane vastane = new Vastane();
+        vastane.suvalisedKaardidKaes();
 
 
         System.out.println("Kuidas mängida?");
@@ -38,9 +42,9 @@ public class Main {
 
         while (!mangLabi) {
             System.out.println("Siin on sinu kaardid: ");
-            kaes.handValja();
+            kaes.kasiValja();
 
-            System.out.print("Sinu voidukaardid ");
+            System.out.print("Sinu voidukaardid    ");
             voiduKogus(mangijadict);
             System.out.print("Vastase voidukaardid ");
             voiduKogus(vastanedict);
@@ -63,7 +67,7 @@ public class Main {
             Thread.sleep(1000);
 
             System.out.println("Vastane käis kaardi: ");
-            Kaart vastanekaart = kaes.uusKaart();
+            Kaart vastanekaart = vastane.mangiKaart();
             vastanekaart.kaartString();
             //Et oleks mängu ajal kaarte näha
             Thread.sleep(1000);
@@ -102,7 +106,7 @@ public class Main {
     public static void voiduKogus(HashMap dict){
         String tuleemoji = "\uD83D\uDD25";
         String veeemoji = "\uD83D\uDCA7";
-        String lumeemoji = "\uD83C\uDF28";
+        String lumeemoji = "\u2744";
         System.out.println("   " + tuleemoji + " : " + dict.get("tuli") + "  "+
                 veeemoji + " : " + dict.get("vesi") + "  " + lumeemoji + " : " + dict.get("lumi"));
     }
