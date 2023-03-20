@@ -169,6 +169,14 @@ public class Kaart implements Comparable<Kaart>{
         }
     }
 
+    public String getEriline() {
+        return eriline;
+    }
+
+    public void setEriline(String eriline) {
+        this.eriline = eriline;
+    }
+
     public int getTugevus() {
         return tugevus;
     }
@@ -181,7 +189,7 @@ public class Kaart implements Comparable<Kaart>{
         return element;
     }
 
-    public void setType(String element) {
+    public void setElement(String element) {
         this.element = element;
     }
 

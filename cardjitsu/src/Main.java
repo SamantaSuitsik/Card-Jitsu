@@ -1,10 +1,13 @@
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         int kaik;
         boolean mangLabi = false;
+        String mangijakestev = new String();
+        String vastasekestev = new String();
 
         Scanner scanner = new Scanner(System.in);
         HashMap<String, Integer> mangijadict = new HashMap<>();
@@ -49,28 +52,70 @@ public class Main {
             System.out.print("Vastase voidukaardid ");
             voiduKogus(vastanedict);
 
+            System.out.print("Kehtivad efektid -  ");
+
+            //TODO kui +-2 siis oleks teisel mangijal
+            System.out.print("vastasele: " + efektidValja(mangijakestev));
+            System.out.println("   sinule: "+ efektidValja(vastasekestev));
+
             System.out.println("Vali, mitmendat kaarti vasakult soovid käia: ");
             boolean valikkorras = false;
             kaik = 1;
             //Kontrollib, et mängija valiks sobiva numbri
             while (!valikkorras) {
                 kaik = scanner.nextInt();
-                if (kaik > 0 && kaik < 6)
-                    valikkorras = true;
-                else
+                if (kaik > 0 && kaik < 6) {
+                    if (kaes.getKaardid()[kaik - 1].getElement().equals(vastasekestev)) {
+                        System.out.println("See element on vastase poolt blokeeritud");
+                    }else {
+                        valikkorras = true;}
+                } else {
                     System.out.println("Palun vali sobiv number (1-5)");
+                }
             }
+
+
             System.out.println("Käisid kaardi:");
             Kaart mangijakaart = kaes.mangiKaart(kaik - 1);
+            if (mangijakestev == "+2")
+                mangijakaart.setTugevus(mangijakaart.getTugevus()+2);
+            if (mangijakestev == "-2")
+                mangijakaart.setTugevus(mangijakaart.getTugevus()-2);
             mangijakaart.kaartString();
             //Et oleks mängu ajal kaarte näha
             Thread.sleep(1000);
 
+
             System.out.println("Vastane käis kaardi: ");
-            Kaart vastanekaart = vastane.mangiKaart();
+            Kaart vastanekaart = vastane.mangiKaart(mangijakestev);
+            if (vastasekestev == "+2")
+                vastanekaart.setTugevus(vastanekaart.getTugevus()+2);
+            if (vastasekestev == "-2")
+                vastanekaart.setTugevus(vastanekaart.getTugevus()-2);
             vastanekaart.kaartString();
             //Et oleks mängu ajal kaarte näha
             Thread.sleep(1000);
+
+            mangijakestev = "";
+            vastasekestev = "";
+
+            //teeb erilisekaardi muutused ära
+            if (mangijakaart.getEriline() != null) {
+                Object[] muutused = teeEriline(mangijakaart, vastanekaart, kaes, vastane);
+                mangijakaart = (Kaart) muutused[0];
+                vastanekaart = (Kaart) muutused[1];
+                kaes = (Kasi) muutused[2];
+                vastane = (Vastane) muutused[3];
+                mangijakestev = (String) muutused[4];
+            }
+            if (vastanekaart.getEriline() != null){
+                Object[] muutused = teeEriline(vastanekaart, mangijakaart, vastane, kaes);
+                vastanekaart = (Kaart)muutused[0];
+                mangijakaart = (Kaart)muutused[1];
+                vastane = (Vastane) muutused[2];
+                kaes = (Kasi)muutused[3];
+                vastasekestev = (String)muutused[4];
+            }
 
             int tulemus = mangijakaart.compareTo(vastanekaart);
             if (tulemus == 0)
@@ -109,5 +154,91 @@ public class Main {
         String lumeemoji = "\u2744";
         System.out.println("   " + tuleemoji + " : " + dict.get("tuli") + "  "+
                 veeemoji + " : " + dict.get("vesi") + "  " + lumeemoji + " : " + dict.get("lumi"));
+    }
+
+    public static Object[] teeEriline(Kaart mojuvkaart, Kaart vastasekaart, Kasi mojuvkasi, Kasi vastasekasi){
+        String edasine = new String();
+        switch (mojuvkaart.getEriline()){
+            case "+2" -> {
+                edasine = "+2";
+            }
+            case "-2" -> {
+                edasine = "-2";
+            }
+            case "vahetus" -> {
+                int hetk = mojuvkaart.getTugevus();
+                mojuvkaart.setTugevus(vastasekaart.getTugevus());
+                vastasekaart.setTugevus(hetk);
+            }
+            case "eemalda tuli" -> {
+                System.out.println("sajmsdasnd tee ;ra juhba");
+            }
+            case "eemalda vesi" -> {
+                System.out.println("samanta plns kaua saaba");
+            }
+            case "eemalda lumi" -> {
+                System.out.println("\uD83D\uDE2D \uD83D\uDE2D \uD83D\uDE2D samantaaaaaaaaaa");
+            }
+            case "muuda tuli" -> {
+                if (vastasekaart.getElement().equals("tuli"))
+                    vastasekaart.setElement("lumi");
+            }
+            case "muuda vesi" -> {
+                if (vastasekaart.getElement().equals("vesi"))
+                    vastasekaart.setElement("tuli");
+            }
+            case "muuda lumi" -> {
+                if (vastasekaart.getElement().equals("lumi"))
+                    vastasekaart.setElement("vesi");
+            }
+            case "blokeeri tuli" -> {
+                edasine = "tuli";
+            }
+            case "blokeeri vesi" -> {
+                edasine = "vesi";
+            }
+            case "blokeeri lumi" -> {
+                edasine = "lumi";
+            }
+            default -> {}
+        }
+
+        return new Object[]{mojuvkaart, vastasekaart, mojuvkasi, vastasekasi, edasine};
+    }
+
+    public static String efektidValja(String eriline){
+        String blokemoji = "\uD83D\uDEAB";
+        String tuleemoji = "\uD83D\uDD25";
+        String veeemoji = "\uD83D\uDCA7";
+        String lumeemoji = "❄";
+        String kitsas = "\u2009";
+        String teinekitsas = "\u202F";
+
+        switch (eriline){
+            case "+2" -> {
+                return "   +2";
+            }
+            case "-2" -> {
+                return "   -2";
+            }
+            case "tuli" -> {
+                return teinekitsas+blokemoji + tuleemoji + kitsas;
+            }
+            case "vesi" -> {
+                return teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
+            }
+            case "lumi" -> {
+                return teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
+            }
+            default -> {
+                return " ❌  ";
+            }
+        }
+    }
+
+    public static Kasi eemaldaElement(Kaart kaart, Kasi kasi){
+        /**SAMANTAAAAAAAAAAAAAAAAAAA TEEEEEE
+         */
+        return kasi;
     }
 }
