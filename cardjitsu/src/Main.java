@@ -52,11 +52,8 @@ public class Main {
             System.out.print("Vastase voidukaardid ");
             voiduKogus(vastanedict);
 
-            System.out.print("Kehtivad efektid -  ");
 
-            //TODO kui +-2 siis oleks teisel mangijal
-            System.out.print("vastasele: " + efektidValja(mangijakestev));
-            System.out.println("   sinule: "+ efektidValja(vastasekestev));
+            efektidValja(mangijakestev, vastasekestev);
 
             System.out.println("Vali, mitmendat kaarti vasakult soovid käia: ");
             boolean valikkorras = false;
@@ -156,6 +153,7 @@ public class Main {
                 veeemoji + " : " + dict.get("vesi") + "  " + lumeemoji + " : " + dict.get("lumi"));
     }
 
+
     public static Object[] teeEriline(Kaart mojuvkaart, Kaart vastasekaart, Kasi mojuvkasi, Kasi vastasekasi){
         String edasine = new String();
         switch (mojuvkaart.getEriline()){
@@ -206,7 +204,7 @@ public class Main {
         return new Object[]{mojuvkaart, vastasekaart, mojuvkasi, vastasekasi, edasine};
     }
 
-    public static String efektidValja(String eriline){
+    public static void efektidValja(String mangija, String vastane){
         String blokemoji = "\uD83D\uDEAB";
         String tuleemoji = "\uD83D\uDD25";
         String veeemoji = "\uD83D\uDCA7";
@@ -214,26 +212,51 @@ public class Main {
         String kitsas = "\u2009";
         String teinekitsas = "\u202F";
 
-        switch (eriline){
+        String sinule = "";
+        String vastasele = "";
+
+        switch (mangija){
             case "+2" -> {
-                return "   +2";
+                sinule = sinule + "  +2";
             }
             case "-2" -> {
-                return "   -2";
+                sinule = sinule + "  -2";
             }
             case "tuli" -> {
-                return teinekitsas+blokemoji + tuleemoji + kitsas;
+                vastasele = vastasele + "  " + teinekitsas+blokemoji + tuleemoji + kitsas;
             }
             case "vesi" -> {
-                return teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
+                vastasele = vastasele + "  " + teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
             }
             case "lumi" -> {
-                return teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
+                vastasele = vastasele + "  " + teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
             }
             default -> {
-                return " ❌  ";
+                vastasele = vastasele + " ❌  ";
             }
         }
+        switch (vastane){
+            case "+2" -> {
+                vastasele = vastasele + "  +2";
+            }
+            case "-2" -> {
+                vastasele = vastasele + "  -2";
+            }
+            case "tuli" -> {
+                sinule = sinule + "  " + teinekitsas+blokemoji + tuleemoji + kitsas;
+            }
+            case "vesi" -> {
+                sinule = sinule + "  " + teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
+            }
+            case "lumi" -> {
+                sinule = sinule + "  " + teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
+            }
+            default -> {
+                sinule = sinule + " ❌  ";
+            }
+        }
+
+        System.out.println("Hetkel kehtivad efektid - sinule : " + sinule + "  vastasele : " + vastasele);
     }
 
     public static Kasi eemaldaElement(Kaart kaart, Kasi kasi){

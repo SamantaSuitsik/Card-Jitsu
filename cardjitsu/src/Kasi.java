@@ -33,8 +33,9 @@ public class Kasi {
         String[] elemendid = new String[]{"tuli", "vesi", "lumi"};
         if ((int)(Math.random()*21)<10){
             int valik = (int)(Math.random()*12);
-            //TODO erilised võiks olla sedas et kui kaart on näiteks tuli saab muutmise oma olla
-            //TODO ainult sedasi et ta ise ei kaotaks (ei muuda veeks vastase oma)
+            while (uuselement == 0 && valik == 8 || uuselement == 1 && valik == 6 || uuselement == 2 && valik == 7)
+                valik = (int)(Math.random()*12);
+
             return new Kaart(uustugevus, elemendid[uuselement], erilised[valik]);
         }
 
