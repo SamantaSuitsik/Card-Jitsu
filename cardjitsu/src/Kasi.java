@@ -33,12 +33,14 @@ public class Kasi {
         String[] elemendid = new String[]{"tuli", "vesi", "lumi"};
         if ((int)(Math.random()*21)<10){
             int valik = (int)(Math.random()*12);
+            //Muutmise efekt ei tekita kaotust
             while (uuselement == 0 && valik == 8 || uuselement == 1 && valik == 6 || uuselement == 2 && valik == 7)
                 valik = (int)(Math.random()*12);
 
+            //Tagasta efektiga kaart
             return new Kaart(uustugevus, elemendid[uuselement], erilised[valik]);
         }
-
+        //Tagasta tavaline kaart
         return new Kaart(uustugevus, elemendid[uuselement]);
     }
 

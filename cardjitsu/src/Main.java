@@ -256,6 +256,7 @@ public class Main {
             }
         }
 
+        //Prindib välja hetke efektid
         System.out.println("Hetkel kehtivad efektid - sinule : " + sinule + "  vastasele : " + vastasele);
     }
 
