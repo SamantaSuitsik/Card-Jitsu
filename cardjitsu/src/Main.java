@@ -46,6 +46,8 @@ public class Main {
         while (!mangLabi) {
             System.out.println("Siin on sinu kaardid: ");
             kaes.kasiValja();
+            System.out.println("vastase kaardid");
+            vastane.kasiValja();
 
             System.out.print("Sinu voidukaardid    ");
             voiduKogus(mangijadict);
@@ -168,14 +170,8 @@ public class Main {
                 mojuvkaart.setTugevus(vastasekaart.getTugevus());
                 vastasekaart.setTugevus(hetk);
             }
-            case "eemalda tuli" -> {
-                System.out.println("sajmsdasnd tee ;ra juhba");
-            }
-            case "eemalda vesi" -> {
-                System.out.println("samanta plns kaua saaba");
-            }
-            case "eemalda lumi" -> {
-                System.out.println("\uD83D\uDE2D \uD83D\uDE2D \uD83D\uDE2D samantaaaaaaaaaa");
+            case "eemalda tuli", "eemalda vesi", "eemalda lumi" -> {
+                vastasekasi = eemaldaElement(mojuvkaart, vastasekasi);
             }
             case "muuda tuli" -> {
                 if (vastasekaart.getElement().equals("tuli"))
@@ -189,14 +185,8 @@ public class Main {
                 if (vastasekaart.getElement().equals("lumi"))
                     vastasekaart.setElement("vesi");
             }
-            case "blokeeri tuli" -> {
-                edasine = "tuli";
-            }
-            case "blokeeri vesi" -> {
-                edasine = "vesi";
-            }
-            case "blokeeri lumi" -> {
-                edasine = "lumi";
+            case "blokeeri tuli", "blokeeri vesi", "blokeeri lumi" -> {
+                edasine = mojuvkaart.getEriline().split(" ")[1];
             }
             default -> {}
         }
@@ -261,8 +251,24 @@ public class Main {
     }
 
     public static Kasi eemaldaElement(Kaart kaart, Kasi kasi){
-        /**SAMANTAAAAAAAAAAAAAAAAAAA TEEEEEE
+        /**SAMANTAAAAA TEE 'RAAAAAA
+         *
+         * -nvm tegin ise
          */
+
+        //Vaatab käe läbi ja eemaldab vastava elemendiga kaardid kuni neid enam ei ole.
+        String element = kaart.getEriline().split(" ")[1];
+        boolean tehtud = false;
+        while (!tehtud) {
+            tehtud = true;
+            //Vaatab tagurpidi läbi et midagi vahele ei jääks
+            for (int i = 4; i >= 0; i--) {
+                if (kasi.getKaardid()[i].getElement().equals(element)) {
+                    kasi.mangiKaart(i);
+                    tehtud = false;
+                }
+            }
+        }
         return kasi;
     }
 }
