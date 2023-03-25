@@ -42,6 +42,16 @@ public class Main {
                 Kui käik lõppes viigiga, ei saa kumbki mängija kaarti.
                 Mängija, kes saab esimesena komplektis kokku nii tule, vee kui ka lume elemendiga kaardid, on võitnud.""");
         System.out.println();
+        System.out.println("""
+                Kaartidel võivad olla ka efektid (üleval paremal), mis mõjutavad võiduvõimalust või järgmist käiku:
+                +2 - järgmisel käigul on mängija käidud kaardi number kahe võrra suurem.
+                -2 - järgmisel käigul on mängija käidud kaardi number kahe võrra väiksem.
+                1\uD83D\uDD019 - väiksema numbriga kaart võidab (kui kaardid on sama elemendiga).
+                \uD83D\uDCA3\uD83D\uDD25 - kõik selle elemendiga kaardid vahetatakse vastase käes välja.
+                \uD83D\uDD25➡\uD83D\uDCA7 - vasakpoolse elemendiga kaardid vahetatakse vastase käes parempoolsete vastu välja.
+                \uD83D\uDEAB❄ - järgmisel käigul ei saa vastane ühtegi selle elemendiga kaarti käia.
+                Kui vastasel on kõik kaardid blokeeritud, kaotab ta automaatselt.""");
+        System.out.println();
 
         while (!mangLabi) {
             System.out.println("Siin on sinu kaardid: ");
