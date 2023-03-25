@@ -50,7 +50,7 @@ public class Main {
                 \uD83D\uDCA3\uD83D\uDD25 - kõik selle elemendiga kaardid vahetatakse vastase käes välja.
                 \uD83D\uDD25➡\uD83D\uDCA7 - vasakpoolse elemendiga kaardid vahetatakse vastase käes parempoolsete vastu välja.
                 \uD83D\uDEAB❄ - järgmisel käigul ei saa vastane ühtegi selle elemendiga kaarti käia.
-                Kui vastasel on kõik kaardid blokeeritud, kaotab ta automaatselt.""");
+                Kui vastasel on kõik kaardid blokeeritud, kaotab ta mängu automaatselt.""");
         System.out.println();
 
         while (!mangLabi) {
@@ -59,9 +59,9 @@ public class Main {
             System.out.println("vastase kaardid");
             vastane.kasiValja();
 
-            System.out.print("Sinu voidukaardid    ");
+            System.out.print("Sinu võidukaardid    ");
             voiduKogus(mangijadict);
-            System.out.print("Vastase voidukaardid ");
+            System.out.print("Vastase võidukaardid ");
             voiduKogus(vastanedict);
 
 
@@ -128,7 +128,7 @@ public class Main {
 
             int tulemus = mangijakaart.compareTo(vastanekaart);
             if (tulemus == 0)
-                System.out.println("See round tuli viik");
+                System.out.println("Jäite see round viiki.");
             else if (tulemus > 0) {
                 System.out.println("Selle roundi võitsid");
                 mangijadict.put(mangijakaart.getElement(), mangijadict.get(mangijakaart.getElement())+1);
@@ -138,11 +138,11 @@ public class Main {
             }
 
             if (kasVoidetud(mangijadict)) {
-                System.out.println("Wooo voitsid m'ngu jejejejeje");
+                System.out.println("Sinu võit! :)");
                 mangLabi = true;
             }
             if (kasVoidetud(vastanedict)) {
-                System.out.println("nooo kaotasid m'ngu nooooo :((((");
+                System.out.println("Arvuti võitis! :(");
                 mangLabi = true;
             }
 
