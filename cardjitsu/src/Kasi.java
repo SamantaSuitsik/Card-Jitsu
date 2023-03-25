@@ -1,5 +1,5 @@
 public class Kasi {
-    private final Kaart[] kaardid;
+    private Kaart[] kaardid;
 
     public static String[] erilised = new String[]{"+2", "-2", "vahetus",
             "eemalda tuli", "eemalda vesi", "eemalda lumi",
@@ -15,6 +15,7 @@ public class Kasi {
     }
 
 
+    //Väljastab kogu käe kaardid reas
     public void kasiValja(){
         for (int i = 0; i < kaardid[0].kaartReturn().length; i++) {
             System.out.println(
@@ -27,11 +28,13 @@ public class Kasi {
         }
     }
 
+    //Tekitab uue juhusliku kaardi
     public Kaart uusKaart(){
         int uustugevus = (int)(Math.random()*11+2);
         int uuselement = (int)(Math.random()*3);
         String[] elemendid = new String[]{"tuli", "vesi", "lumi"};
-        if ((int)(Math.random()*21)<10){
+        //Võimalus, et tekiks erivõimega kaart
+        if ((int)(Math.random()*21)<5){
             int valik = (int)(Math.random()*12);
             //Muutmise efekt ei tekita kaotust
             while (uuselement == 0 && valik == 8 || uuselement == 1 && valik == 6 || uuselement == 2 && valik == 7)
@@ -44,6 +47,8 @@ public class Kasi {
         return new Kaart(uustugevus, elemendid[uuselement]);
     }
 
+
+    //Tagastab indeksil leiduva kaardi ja tekitab uue juhusliku kaardi
     public Kaart mangiKaart(int index){
         //savekaart on kaart, mis käidi ära
         //liigutab kaardid vasakule ja paneb uue kaardi loppu
@@ -64,5 +69,9 @@ public class Kasi {
 
     public Kaart[] getKaardid() {
         return kaardid;
+    }
+
+    public void setKaardid(Kaart[] kaardid){
+        this.kaardid = kaardid;
     }
 }

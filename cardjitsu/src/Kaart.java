@@ -17,6 +17,7 @@ public class Kaart implements Comparable<Kaart>{
         this.eriline = eriline;
     }
 
+    //Väljastab Kaardi ilusal kujul
     public void kaartString(){
         System.out.println("┌───────────┐");
         System.out.println("│"+" "+tugevusValja()+" ".repeat(2)+erilineValja()+" "+"│");
@@ -28,12 +29,16 @@ public class Kaart implements Comparable<Kaart>{
         System.out.println("└───────────┘");
 
     }
+
+    //Tagastab kaardi tugevuse vormistatult, et kaartStringiga ühtiks
     private String tugevusValja(){
         if (this.tugevus < 10)
             return (this.tugevus+" ");
         else
             return String.valueOf(this.tugevus);
     }
+
+    //Tagastab kaardi rida realt String massiivina
     public String[] kaartReturn(){
         return new String[]{
                 "┌───────────┐",
@@ -48,6 +53,7 @@ public class Kaart implements Comparable<Kaart>{
         };
     }
 
+    //Tagastab kaardi elemendi, et ascii kujul väljastada saaks
     private String[] elementvalja() {
         if (Objects.equals(this.element, "tuli")) {
             return new String[]{
@@ -76,9 +82,12 @@ public class Kaart implements Comparable<Kaart>{
                     "  *   *  ",
             };
         }
+        //Default tagastus, ei tohiks kunagi juhtuda
         return new String[]{"a", "b"};
     }
 
+
+    //Tagastab Stringi Kaardi erivõimest ilusal kujul
     public String erilineValja(){
 
         String xemoji = "❌";
@@ -137,6 +146,7 @@ public class Kaart implements Comparable<Kaart>{
         }
     }
 
+    //Võrdleb kahte kaarti, elemntida ja tugevuse põhjal
     @Override
     public int compareTo(Kaart o) {
         if (Objects.equals(this.element, o.element)) {
