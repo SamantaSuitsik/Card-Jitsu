@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -7,8 +6,8 @@ public class Main {
         int kaik;
         boolean mangLabi = false;
         //Kehtivate efektide meeleshoid
-        String mangijakestev = new String();
-        String vastasekestev = new String();
+        String mangijakestev = "";
+        String vastasekestev = "";
 
         //Mängija soovi teadmiseks
         Scanner scanner = new Scanner(System.in);
@@ -94,9 +93,9 @@ public class Main {
             System.out.println("Käisid kaardi:");
             Kaart mangijakaart = kaes.mangiKaart(kaik - 1);
             //Kui eriline võime oli kaardi tugevust muuta teeb selle siin ära
-            if (mangijakestev == "+2")
+            if (mangijakestev.equals("+2"))
                 mangijakaart.setTugevus(mangijakaart.getTugevus()+2);
-            if (mangijakestev == "-2")
+            if (mangijakestev.equals("-2"))
                 mangijakaart.setTugevus(mangijakaart.getTugevus()-2);
             mangijakaart.kaartString();
             //Et oleks mängu ajal kaarte näha
@@ -108,9 +107,9 @@ public class Main {
             Kaart vastanekaart = vastane.mangiKaart(mangijakestev);
 
             //Kui eriline võime oli kaardi tugevust muuta teeb selle siin ära
-            if (vastasekestev == "+2")
+            if (vastasekestev.equals("+2"))
                 vastanekaart.setTugevus(vastanekaart.getTugevus()+2);
-            if (vastasekestev == "-2")
+            if (vastasekestev.equals("-2"))
                 vastanekaart.setTugevus(vastanekaart.getTugevus()-2);
             vastanekaart.kaartString();
             //Et oleks mängu ajal kaarte näha
@@ -153,12 +152,12 @@ public class Main {
 
 
             //Vastasel ei leidu kaarti mis ei ole blokeeritud
-            if (!kasLeidubBlokeerimataElement(mangijakestev, vastane)){
+            if (eiLeiduBlokeerimataElement(mangijakestev, vastane)){
                 System.out.println("Sinu võit! Vastasel ei ole kaarti, mida saaks käia");
                 mangLabi = true;
             }
             //Mängijal ei leidu kaarti mis ei ole blokeeritud
-            if (!kasLeidubBlokeerimataElement(vastasekestev, kaes)){
+            if (eiLeiduBlokeerimataElement(vastasekestev, kaes)){
                 System.out.println("Arvuti võitis! Sul ei ole kaarti, mida saaksid käia");
                 mangLabi = true;
             }
@@ -193,7 +192,7 @@ public class Main {
     public static void voiduKogus(HashMap dict){
         String tuleemoji = "\uD83D\uDD25";
         String veeemoji = "\uD83D\uDCA7";
-        String lumeemoji = "\u2744";
+        String lumeemoji = "❄";
         System.out.println("   " + tuleemoji + " : " + dict.get("tuli") + "  "+
                 veeemoji + " : " + dict.get("vesi") + "  " + lumeemoji + " : " + dict.get("lumi"));
     }
@@ -202,16 +201,12 @@ public class Main {
     //Võtab mängitud kaardidi ja hetkel käesolevad kaardid argumentideks
     //Muudab neid vastavalt erivõimele
     public static Object[] teeEriline(Kaart mojuvkaart, Kaart vastasekaart, Kasi mojuvkasi, Kasi vastasekasi){
-        String edasine = new String();
+        String edasine = "";
         switch (mojuvkaart.getEriline()){
 
             //Salvestab +2 või -2 mällu, et järgmine käik rakendada
-            case "+2" -> {
-                edasine = "+2";
-            }
-            case "-2" -> {
-                edasine = "-2";
-            }
+            case "+2" -> edasine = "+2";
+            case "-2" -> edasine = "-2";
             //Vahetab kaartidel tugevused salaja ära, et efektiivselt kehtiks nõrgem kaart võidab
             case "vahetus" -> {
                 int hetk = mojuvkaart.getTugevus();
@@ -219,9 +214,7 @@ public class Main {
                 vastasekaart.setTugevus(hetk);
             }
             //Eemaldab käest kõik elemendid
-            case "eemalda tuli", "eemalda vesi", "eemalda lumi" -> {
-                vastasekasi = eemaldaElement(mojuvkaart, vastasekasi);
-            }
+            case "eemalda tuli", "eemalda vesi", "eemalda lumi" -> vastasekasi = eemaldaElement(mojuvkaart, vastasekasi);
             //Muudab kaardi elemendid vajadusel
             case "muuda tuli" -> {
                 if (vastasekaart.getElement().equals("tuli"))
@@ -236,10 +229,8 @@ public class Main {
                     vastasekaart.setElement("vesi");
             }
             //Salvestab blokeeringu mällu
-            case "blokeeri tuli", "blokeeri vesi", "blokeeri lumi" -> {
-                //Switch statement tehakse juppideks, et saaks tagumist osa otse elemendiga võrrelda
-                edasine = mojuvkaart.getEriline().split(" ")[1];
-            }
+            case "blokeeri tuli", "blokeeri vesi", "blokeeri lumi" -> //Switch statement tehakse juppideks, et saaks tagumist osa otse elemendiga võrrelda
+                    edasine = mojuvkaart.getEriline().split(" ")[1];
             default -> {}
         }
 
@@ -261,44 +252,20 @@ public class Main {
         String vastasele = "";
 
         switch (mangija){
-            case "+2" -> {
-                sinule = sinule + "  +2";
-            }
-            case "-2" -> {
-                sinule = sinule + "  -2";
-            }
-            case "tuli" -> {
-                vastasele = vastasele + "  " + teinekitsas+blokemoji + tuleemoji + kitsas;
-            }
-            case "vesi" -> {
-                vastasele = vastasele + "  " + teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
-            }
-            case "lumi" -> {
-                vastasele = vastasele + "  " + teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
-            }
-            default -> {
-                vastasele = vastasele + " ❌  ";
-            }
+            case "+2" -> sinule = sinule + "  +2";
+            case "-2" -> sinule = sinule + "  -2";
+            case "tuli" -> vastasele = vastasele + "  " + teinekitsas+blokemoji + tuleemoji + kitsas;
+            case "vesi" -> vastasele = vastasele + "  " + teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
+            case "lumi" -> vastasele = vastasele + "  " + teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
+            default -> vastasele = vastasele + " ❌  ";
         }
         switch (vastane){
-            case "+2" -> {
-                vastasele = vastasele + "  +2";
-            }
-            case "-2" -> {
-                vastasele = vastasele + "  -2";
-            }
-            case "tuli" -> {
-                sinule = sinule + "  " + teinekitsas+blokemoji + tuleemoji + kitsas;
-            }
-            case "vesi" -> {
-                sinule = sinule + "  " + teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
-            }
-            case "lumi" -> {
-                sinule = sinule + "  " + teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
-            }
-            default -> {
-                sinule = sinule + " ❌  ";
-            }
+            case "+2" -> vastasele = vastasele + "  +2";
+            case "-2" -> vastasele = vastasele + "  -2";
+            case "tuli" -> sinule = sinule + "  " + teinekitsas+blokemoji + tuleemoji + kitsas;
+            case "vesi" -> sinule = sinule + "  " + teinekitsas+kitsas+blokemoji + veeemoji + kitsas;
+            case "lumi" -> sinule = sinule + "  " + teinekitsas+kitsas+blokemoji + lumeemoji + kitsas;
+            default -> sinule = sinule + " ❌  ";
         }
 
         //Prindib välja hetke efektid
@@ -325,11 +292,11 @@ public class Main {
 
 
     //Kontrollib kas käes on kaart mida saaks käia
-    public static boolean kasLeidubBlokeerimataElement(String element, Kasi kasi){
+    public static boolean eiLeiduBlokeerimataElement(String element, Kasi kasi){
         for (Kaart kaart : kasi.getKaardid()) {
             if (!kaart.getElement().equals(element))
-                return true;
+                return false;
         }
-        return false;
+        return true;
     }
 }
