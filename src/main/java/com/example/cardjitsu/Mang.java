@@ -1,21 +1,58 @@
 package com.example.cardjitsu;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Scanner;
 
-public class HelloApplication extends Application {
+public class Mang extends Application {
+
+    private Kasi mangija;
+    private Vastane vastane;
+
+    public Mang(){
+        Canvas canvas = new Canvas(800, 600);
+        canvas.setOnMouseClicked(event -> {
+            handleClick(event.getX(), event.getY());
+        });
+
+
+    }
+
+
+    public void handleClick(double x, double y){
+        //TODO siin tuleb ss pmst paika panna kus kaardid on ja ss saab kordinaatidega paika panna millise peale vajutati
+        //TODO tollest saab p]him]tteliselt vana maini k'ima panna
+
+    }
     @Override
     public void start(Stage peaLava) throws IOException {
+
+        //Scene scene = new Scene();
+
+        //see tuleb j'rgi teha
+        /*
+        Scene s = new Scene(getMainPane());
+        // Lisame CSS'iga taustapildi ja määrame, kui suureks see pilt peaks venitatama.
+        s.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: 400px 300px;");
+
+        stage.setTitle("Trips-traps-trull");
+        stage.setMinWidth(400.0);
+        stage.setScene(s);
+        stage.show();
+         */
+
+
+
+        //T'iesti useless prg
+
+        /*
         Group group = new Group();
         Scene scene = new Scene(group, 800, 600, Color.SNOW);
 
@@ -35,11 +72,13 @@ public class HelloApplication extends Application {
         peaLava.setScene(scene);
         peaLava.setTitle("Card-Jitsu");
         peaLava.show();
+         */
 
     }
 
     public static void main(String[] args) throws InterruptedException {
-        launch();
+        launch();}
+
         /*
         int kaik;
         boolean mangLabi = false;
@@ -213,8 +252,6 @@ public class HelloApplication extends Application {
 
         }
          */
-
-    }
 
 
     //Kontrollib võitu
