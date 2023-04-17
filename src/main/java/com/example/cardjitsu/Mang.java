@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -36,6 +37,18 @@ public class Mang extends Application {
         vastane = new Vastane();
         this.mangija.suvalisedKaardidKaes();
         this.vastane.suvalisedKaardidKaes();
+        joonistaristkulikud();
+
+    }
+
+    private void joonistaristkulikud() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setStroke(Color.BLACK);
+        int laius = (int)(canvas.getWidth()/10);
+        int korgus = (int)(canvas.getHeight()/6);
+        for (int i = 2; i <= 6; i++) {
+            gc.strokeRect(canvas.getWidth()/8 *i - laius/2, canvas.getHeight()*3/4, laius, korgus);
+        }
 
     }
 
@@ -49,17 +62,43 @@ public class Mang extends Application {
 
 
 
-    public void handleClick(double x, double y){
-        //TODO siin tuleb ss pmst paika panna kus kaardid on ja ss saab kordinaatidega paika panna millise peale vajutati
-        //TODO tollest saab p]him]tteliselt vana maini k'ima panna
+    public void handleClick(double x, double y) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        double yalgus = canvas.getHeight() * 3 / 4;
+        double mangitud = ((8 * x + canvas.getWidth() / 10 * 4) / canvas.getWidth()) - 2;
+        if (y > yalgus && y < yalgus + canvas.getHeight() / 6) {
+            if (mangitud - (int) mangitud <= 0.8) {
+                reageeri((int) mangitud);
+                gc.setFill(Color.INDIGO);
+                gc.fillRect(x, y, 10, 10);
+            }
+        }
+    }
+
+    public void reageeri(int indeks){
+        Kaart mangitud = this.mangija.mangiKaart(indeks);
+        joonistaKaart(mangitud, 400, 200);
+        //TODO uus func migni teebackend vmidagi
 
     }
+
+    public void joonistaKaart(Kaart kaart, double x, double y){
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
+        gc.fillRect(x-10, y-10, 100, 100);
+        gc.setFill(Color.INDIGO);
+        gc.strokeRect(x, y, 80, 100);
+        gc.fillText(Integer.toString(kaart.getTugevus()), x+10, y+15);
+        gc.fillText(kaart.erilineValja(), x+40, y+20);
+        gc.fillText(kaart.getElement(), x+10, y+30);
+
+    }
+
     @Override
     public void start(Stage peaLava) throws IOException {
-        //see tuleb j'rgi teha
         Scene s = new Scene(getMainPane());
         // Lisame CSS'iga taustapildi ja määrame, kui suureks see pilt peaks venitatama.
-        s.getRoot().setStyle("-fx-background-image: url('background.png'); -fx-background-size: 800px 600px;");
+        //s.getRoot().setStyle("-fx-background-image: url('background.png'); -fx-background-size: 800px 600px;");
 
         peaLava.setTitle("Card-Jitsu");
         peaLava.setMinWidth(400.0);
