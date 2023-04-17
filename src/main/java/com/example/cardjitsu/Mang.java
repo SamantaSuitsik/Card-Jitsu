@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -15,15 +17,36 @@ public class Mang extends Application {
 
     private Kasi mangija;
     private Vastane vastane;
+    private boolean mangkaib;
+
+    private Canvas canvas;
 
     public Mang(){
-        Canvas canvas = new Canvas(800, 600);
+        this.canvas = new Canvas(800, 600);
         canvas.setOnMouseClicked(event -> {
             handleClick(event.getX(), event.getY());
         });
 
+        alustaUusMang();
+    }
+
+    public void alustaUusMang(){
+        this.setMangkaib(true);
+        mangija = new Kasi();
+        vastane = new Vastane();
+        this.mangija.suvalisedKaardidKaes();
+        this.vastane.suvalisedKaardidKaes();
 
     }
+
+    private Pane getMainPane() {
+        Pane pane = new FlowPane();
+        //Pane buttonPane = this.getButtonPane();
+        pane.getChildren().addAll(canvas);
+        return pane;
+    }
+
+
 
 
     public void handleClick(double x, double y){
@@ -33,51 +56,24 @@ public class Mang extends Application {
     }
     @Override
     public void start(Stage peaLava) throws IOException {
-
-        //Scene scene = new Scene();
-
         //see tuleb j'rgi teha
-        /*
         Scene s = new Scene(getMainPane());
         // Lisame CSS'iga taustapildi ja määrame, kui suureks see pilt peaks venitatama.
-        s.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: 400px 300px;");
+        s.getRoot().setStyle("-fx-background-image: url('background.png'); -fx-background-size: 800px 600px;");
 
-        stage.setTitle("Trips-traps-trull");
-        stage.setMinWidth(400.0);
-        stage.setScene(s);
-        stage.show();
-         */
-
-
-
-        //T'iesti useless prg
-
-        /*
-        Group group = new Group();
-        Scene scene = new Scene(group, 800, 600, Color.SNOW);
-
-        Rectangle[] kaardid = new Rectangle[5];
-        for (int i = 0; i < 5; i++) {
-            Rectangle kaart = new Rectangle();
-            kaardid[i] = kaart;
-            kaardid[i].setWidth(80);
-            kaardid[i].setHeight(100);
-            kaardid[i].setFill(Color.color(0.02, Math.random(), Math.random()));
-            kaardid[i].setStroke(Color.RED);
-            kaardid[i].setLayoutX(400 + 60*i);
-            kaardid[i].setLayoutY(450);
-            group.getChildren().addAll(kaardid[i]);
-        }
-
-        peaLava.setScene(scene);
         peaLava.setTitle("Card-Jitsu");
+        peaLava.setMinWidth(400.0);
+        peaLava.setScene(s);
         peaLava.show();
-         */
 
     }
 
+    public void setMangkaib(boolean mangkaib) {
+        this.mangkaib = mangkaib;
+    }
+
     public static void main(String[] args) throws InterruptedException {
-        launch();}
+        launch(args);}
 
         /*
         int kaik;
