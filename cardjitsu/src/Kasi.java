@@ -1,7 +1,7 @@
 public class Kasi {
     private Kaart[] kaardid;
 
-    public static String[] erilised = new String[]{"+2", "-2", "vahetus",
+    public static final String[] erilised = new String[]{"+2", "-2", "vahetus",
             "eemalda tuli", "eemalda vesi", "eemalda lumi",
             "muuda tuli", "muuda vesi", "muuda lumi",
             "blokeeri tuli", "blokeeri vesi", "blokeeri lumi"};
