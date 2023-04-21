@@ -1,11 +1,14 @@
 package com.example.cardjitsu;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -37,10 +40,14 @@ public class Mang extends Application {
 
     public void alustaUusMang(){
         this.setMangkaib(true);
+        mangijakestev = "";
+        vastasekestev = "";
         mangija = new Kasi();
         vastane = new Vastane();
         this.mangija.suvalisedKaardidKaes();
         this.vastane.suvalisedKaardidKaes();
+        canvas.getGraphicsContext2D().setFill(Color.WHITE);
+        canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         joonistaristkulikud();
         joonistaMangijaKaardid();
         setdictalgne();
@@ -79,14 +86,21 @@ public class Mang extends Application {
 
     public void handleClick(double x, double y) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
+        gc.fillRect(290,90, 300,20);
+        gc.setFill(Color.INDIGO);
         double yalgus = canvas.getHeight() * 3 / 4;
         double mangitud = ((8 * x + canvas.getWidth() / 10 * 4) / canvas.getWidth()) - 2;
         if (y > yalgus && y < yalgus + canvas.getHeight() / 6 && this.mangkaib) {
             if (mangitud - (int) mangitud <= 0.8) {
-                //TODO peab kontrollima et seda kaarti saaks k'ia
-                reageeri((int) mangitud);
-                gc.setFill(Color.INDIGO);
-                gc.fillRect(x, y, 10, 10);
+                if (this.mangija.getKaardid()[(int)mangitud].getElement().equals(vastasekestev)){
+                    System.out.println("See element on vastase poolt blokeeritud");
+                    gc.fillText("See element on blokeeritud ", 300, 100);
+                } else {
+                    reageeri((int) mangitud);
+                    gc.setFill(Color.INDIGO);
+                    gc.fillRect(x, y, 10, 10);
+                }
             }
         }
     }
@@ -211,8 +225,28 @@ public class Mang extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.INDIGO);
         gc.fillText(tekst + " Voitis, mang labi", 300, 150);
+        restartAken();
 
         //TODO uus aken, mis annab v'imaluse uuesti alustada v]i v;ljuda
+    }
+
+    public void restartAken(){
+        Button uuesti = new Button("Uuesti?");
+        Button exit = new Button("Exit");
+        HBox box = new HBox(20);
+        box.getChildren().addAll(uuesti, exit);
+        Stage restart = new Stage();
+        Scene res = new Scene(box, 150, 60);
+        restart.setScene(res);
+        restart.show();
+
+        uuesti.setOnMouseClicked(event -> {
+            alustaUusMang();
+            restart.hide();
+        });
+        exit.setOnMouseClicked(event -> {
+            Platform.exit();
+        });
     }
 
     public void joonistaEriEfektid(){
