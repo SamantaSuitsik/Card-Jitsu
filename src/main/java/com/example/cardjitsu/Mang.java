@@ -26,6 +26,8 @@ public class Mang extends Application {
     private Canvas canvas;
     private String mangijakestev = "";
     private String vastasekestev = "";
+    private Kaart vastasekaart;
+    private Kaart mangijakaart;
      private HashMap<String, Integer> mangijadict = new HashMap<>();
     private HashMap<String, Integer> vastanedict = new HashMap<>();
 
@@ -46,11 +48,8 @@ public class Mang extends Application {
         vastane = new Vastane();
         this.mangija.suvalisedKaardidKaes();
         this.vastane.suvalisedKaardidKaes();
-        canvas.getGraphicsContext2D().setFill(Color.WHITE);
-        canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        joonistaristkulikud();
-        joonistaMangijaKaardid();
         setdictalgne();
+        joonistaEkraan();
 
     }
 
@@ -63,16 +62,6 @@ public class Mang extends Application {
         this.vastanedict.put("lumi", 0);
     }
 
-    private void joonistaristkulikud() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setStroke(Color.BLACK);
-        int laius = (int)(canvas.getWidth()/10);
-        int korgus = (int)(canvas.getHeight()/6);
-        for (int i = 2; i <= 6; i++) {
-            gc.strokeRect(canvas.getWidth()/8 *i - laius/2, canvas.getHeight()*3/4, laius, korgus);
-        }
-
-    }
 
     private Pane getMainPane() {
         Pane pane = new FlowPane();
@@ -81,8 +70,17 @@ public class Mang extends Application {
         return pane;
     }
 
-
-
+    public void joonistaEkraan(){
+        canvas.getGraphicsContext2D().setFill(Color.WHITE);
+        canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        joonistaMangijaKaardid();
+        joonistaEriEfektid();
+        joonistaVoiduKogused();
+        if (this.mangijakaart != null)
+            joonistaKaart(this.mangijakaart, canvas.getWidth()/2, canvas.getHeight()/3);
+        if (this.vastasekaart != null)
+            joonistaKaart(this.vastasekaart, canvas.getWidth()/4, canvas.getHeight()/3);
+    }
 
     public void handleClick(double x, double y) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -91,7 +89,8 @@ public class Mang extends Application {
         gc.setFill(Color.INDIGO);
         double yalgus = canvas.getHeight() * 3 / 4;
         double mangitud = ((8 * x + canvas.getWidth() / 10 * 4) / canvas.getWidth()) - 2;
-        if (y > yalgus && y < yalgus + canvas.getHeight() / 6 && this.mangkaib) {
+        if (y > yalgus && y < yalgus + canvas.getHeight() / 6 && this.mangkaib
+            && x > canvas.getWidth()/8 && x < canvas.getWidth()*7/8) {
             if (mangitud - (int) mangitud <= 0.8) {
                 if (this.mangija.getKaardid()[(int)mangitud].getElement().equals(vastasekestev)){
                     System.out.println("See element on vastase poolt blokeeritud");
@@ -106,83 +105,62 @@ public class Mang extends Application {
     }
 
     public void reageeri(int indeks){
-        Kaart mangitud = this.mangija.mangiKaart(indeks);
+        this.mangijakaart = this.mangija.mangiKaart(indeks);
 
-        //Prindib kõik mängja kaardid välja
-        joonistaMangijaKaardid();
-
-        //Prindib kõik võidetud kaartide kogused välja
-        joonistaVoiduKogused();
-
-        //Väljastab hetkel kehtivad efektid
-        joonistaEriEfektid();
-
-        //Prindib mängija käidud kaardi välja
-        joonistaKaart(mangitud, 400, 200);
+        joonistaEkraan();
 
         //Kui eriline võime oli kaardi tugevust muuta teeb selle siin ära
         if (this.mangijakestev.equals("+2"))
-            mangitud.setTugevus(mangitud.getTugevus()+2);
+            this.mangijakaart.setTugevus(this.mangijakaart.getTugevus()+2);
         if (this.mangijakestev.equals("-2"))
-            mangitud.setTugevus(mangitud.getTugevus()-2);
+            this.mangijakaart.setTugevus(this.mangijakaart.getTugevus()-2);
 
-        joonistaKaart(mangitud, 400, 200);
 
         //Prindib vastase käidud kaardi välja
-        Kaart vastanekaart = this.vastane.mangiKaart(this.mangijakestev);
+        this.vastasekaart = this.vastane.mangiKaart(this.mangijakestev);
 
-        joonistaKaart(vastanekaart, 200, 200);
 
         //Kui eriline võime oli kaardi tugevust muuta teeb selle siin ära
         if (vastasekestev.equals("+2"))
-            vastanekaart.setTugevus(vastanekaart.getTugevus()+2);
+            this.vastasekaart.setTugevus(this.vastasekaart.getTugevus()+2);
         if (vastasekestev.equals("-2"))
-            vastanekaart.setTugevus(vastanekaart.getTugevus()-2);
+            this.vastasekaart.setTugevus(this.vastasekaart.getTugevus()-2);
 
-        joonistaKaart(vastanekaart, 200, 200);
 
         //Muudab meeleshoitud erilised efektid tagasi tühjaks
         this.mangijakestev = "";
         this.vastasekestev = "";
 
         //teeb erilisekaardi muutused ära
-        if (mangitud.getEriline() != null) {
-            Object[] muutused = teeEriline(mangitud, vastanekaart, this.mangija, this.vastane);
-            mangitud = (Kaart) muutused[0];
-            vastanekaart = (Kaart) muutused[1];
+        if (this.mangijakaart.getEriline() != null) {
+            Object[] muutused = teeEriline(this.mangijakaart, this.vastasekaart, this.mangija, this.vastane);
+            this.mangijakaart = (Kaart) muutused[0];
+            this.vastasekaart = (Kaart) muutused[1];
             this.mangija = (Kasi) muutused[2];
             this.vastane = (Vastane) muutused[3];
             this.mangijakestev = (String) muutused[4];
         }
-        if (vastanekaart.getEriline() != null){
-            Object[] muutused = teeEriline(vastanekaart, mangitud, this.vastane, this.mangija);
-            vastanekaart = (Kaart)muutused[0];
-            mangitud = (Kaart)muutused[1];
+        if (this.vastasekaart.getEriline() != null){
+            Object[] muutused = teeEriline(this.vastasekaart, this.mangijakaart, this.vastane, this.mangija);
+            this.vastasekaart = (Kaart)muutused[0];
+            this.mangijakaart = (Kaart)muutused[1];
             this.vastane = (Vastane) muutused[2];
             this.mangija = (Kasi)muutused[3];
             this.vastasekestev = (String)muutused[4];
         }
 
-        //Prindib kõik mängja kaardid välja
-        joonistaMangijaKaardid();
-
-        //Prindib kõik võidetud kaartide kogused välja
-        joonistaVoiduKogused();
-
-        //Väljastab hetkel kehtivad efektid
-        joonistaEriEfektid();
-
+        joonistaEkraan();
 
         //Kontrollib kumb kaart võidab
-        int tulemus = mangitud.compareTo(vastanekaart);
+        int tulemus = this.mangijakaart.compareTo(this.vastasekaart);
         if (tulemus == 0)
             System.out.println("Jäite see round viiki.");
         else if (tulemus > 0) {
             System.out.println("Selle roundi võitsid");
-            this.mangijadict.put(mangitud.getElement(), this.mangijadict.get(mangitud.getElement())+1);
+            this.mangijadict.put(this.mangijakaart.getElement(), this.mangijadict.get(this.mangijakaart.getElement())+1);
         }else {
             System.out.println("Selle roundi kaotasid");
-            this.vastanedict.put(vastanekaart.getElement(), this.vastanedict.get(vastanekaart.getElement()) + 1);
+            this.vastanedict.put(this.vastasekaart.getElement(), this.vastanedict.get(this.vastasekaart.getElement()) + 1);
         }
 
 
@@ -211,14 +189,9 @@ public class Mang extends Application {
             tegeleVoit("Arvuti ");
             this.mangkaib = false;
         }
-        //Prindib kõik mängja kaardid välja
-        joonistaMangijaKaardid();
 
-        //Prindib kõik võidetud kaartide kogused välja
-        joonistaVoiduKogused();
-
-        //Väljastab hetkel kehtivad efektid
-        joonistaEriEfektid();
+        if (this.mangkaib)
+            joonistaEkraan();
     }
 
     public void tegeleVoit(String tekst){
@@ -251,12 +224,12 @@ public class Mang extends Application {
 
     public void joonistaEriEfektid(){
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(580, 190, 200, 100);
+        //gc.setFill(Color.WHITE);
+        //gc.fillRect(580, 190, 200, 100);
         gc.setFill(Color.INDIGO);
         String[] teksid = efektidValja();
-        gc.fillText("Sinule : " + teksid[0], 600, 200);
-        gc.fillText("Vastasele : " + teksid[1], 600, 230);
+        gc.fillText("Sinule : " + teksid[0], canvas.getWidth()*3/4, canvas.getHeight()/3);
+        gc.fillText("Vastasele : " + teksid[1], canvas.getWidth()*3/4, canvas.getHeight()/3+20);
     }
 
     public void joonistaMangijaKaardid(){
@@ -276,8 +249,8 @@ public class Mang extends Application {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        gc.setFill(Color.WHITE);
-        gc.fillRect(480, 390, 300, 50);
+        //gc.setFill(Color.WHITE);
+        //gc.fillRect(480, 390, 300, 50);
         gc.setFill(Color.INDIGO);
 
 
@@ -287,28 +260,37 @@ public class Mang extends Application {
         String tekst2 = "   " + tuleemoji + " : " + this.vastanedict.get("tuli") + "  "+
                 veeemoji + " : " + this.vastanedict.get("vesi") + "  " + lumeemoji + " : " + this.vastanedict.get("lumi");
 
-        gc.fillText("Sinule : " + tekst1, 500, 400);
-        gc.fillText("Vastasele : " + tekst2, 500, 430);
+        gc.fillText("Sinule : " + tekst1, canvas.getWidth()-300, canvas.getHeight()*2/3);
+        gc.fillText("Vastasele : " + tekst2, canvas.getWidth()-300, canvas.getHeight()*2/3+20);
     }
 
     public void joonistaKaart(Kaart kaart, double x, double y){
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
-        gc.fillRect(x-10, y-10, 100, 100);
+        gc.fillRect(x, y, canvas.getWidth()/10, canvas.getHeight()/6);
         gc.setFill(Color.INDIGO);
-        gc.strokeRect(x, y, 80, 100);
-        gc.fillText(Integer.toString(kaart.getTugevus()), x+10, y+15);
-        gc.fillText(kaart.erilineValja(), x+40, y+20);
-        gc.fillText(kaart.getElement(), x+10, y+30);
+        gc.strokeRect(x, y, canvas.getWidth()/10, canvas.getHeight()/6);
+        gc.fillText(Integer.toString(kaart.getTugevus()), x+canvas.getWidth()/80, y+canvas.getHeight()/40);
+        gc.fillText(kaart.erilineValja(), x+canvas.getWidth()/20, y+canvas.getHeight()/30);
+        gc.fillText(kaart.getElement(), x+canvas.getWidth()/80, y+canvas.getHeight()/20);
 
     }
 
     @Override
     public void start(Stage peaLava) throws IOException {
         Scene s = new Scene(getMainPane());
+
         // Lisame CSS'iga taustapildi ja määrame, kui suureks see pilt peaks venitatama.
         //s.getRoot().setStyle("-fx-background-image: url('background.png'); -fx-background-size: 800px 600px;");
 
+        s.widthProperty().addListener(event -> {
+            canvas.setWidth(s.getWidth());
+            joonistaEkraan();
+        });
+        s.heightProperty().addListener(event -> {
+            canvas.setHeight(s.getHeight());
+            joonistaEkraan();
+        });
         peaLava.setTitle("Card-Jitsu");
         peaLava.setMinWidth(400.0);
         peaLava.setScene(s);
