@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -88,26 +89,35 @@ public class Mang extends Application {
         gc.fillRect(290,90, 300,20);
         gc.setFill(Color.INDIGO);
         double yalgus = canvas.getHeight() * 3 / 4;
-        double mangitud = ((8 * x + canvas.getWidth() / 10 * 4) / canvas.getWidth()) - 2;
+        int laius = (int)(canvas.getWidth()/10);
+        double mangitud = ((8 * x + laius * 4) / canvas.getWidth()) - 2;
         if (y > yalgus && y < yalgus + canvas.getHeight() / 6 && this.mangkaib
-            && x > canvas.getWidth()/8 && x < canvas.getWidth()*7/8) {
+            && x > canvas.getWidth()/4 - laius/2 && x < canvas.getWidth()/8 *6 + laius/2) {
             if (mangitud - (int) mangitud <= 0.8) {
                 if (this.mangija.getKaardid()[(int)mangitud].getElement().equals(vastasekestev)){
                     System.out.println("See element on vastase poolt blokeeritud");
                     gc.fillText("See element on blokeeritud ", 300, 100);
                 } else {
                     reageeri((int) mangitud);
-                    gc.setFill(Color.INDIGO);
-                    gc.fillRect(x, y, 10, 10);
+                    //gc.setFill(Color.INDIGO);
+                    //gc.fillRect(x, y, 10, 10);
                 }
             }
         }
     }
 
+    /*
+        int laius = (int)(canvas.getWidth()/10);
+        int korgus = (int)(canvas.getHeight()/6);
+        for (int i = 2; i <= 6; i++) {
+            joonistaKaart(mangija.getKaardid()[i-2],canvas.getWidth()/8 *i - laius/2, canvas.getHeight()*3/4);
+        }
+     */
+
     public void reageeri(int indeks){
         this.mangijakaart = this.mangija.mangiKaart(indeks);
 
-        joonistaEkraan();
+        //joonistaEkraan();
 
         //Kui eriline võime oli kaardi tugevust muuta teeb selle siin ära
         if (this.mangijakestev.equals("+2"))
@@ -149,7 +159,7 @@ public class Mang extends Application {
             this.vastasekestev = (String)muutused[4];
         }
 
-        joonistaEkraan();
+        //joonistaEkraan();
 
         //Kontrollib kumb kaart võidab
         int tulemus = this.mangijakaart.compareTo(this.vastasekaart);
@@ -163,6 +173,8 @@ public class Mang extends Application {
             this.vastanedict.put(this.vastasekaart.getElement(), this.vastanedict.get(this.vastasekaart.getElement()) + 1);
         }
 
+        if (this.mangkaib)
+            joonistaEkraan();
 
         //Vastasel ei leidu kaarti mis ei ole blokeeritud
         if (eiLeiduBlokeerimataElement(this.mangijakestev, this.vastane)){
@@ -190,8 +202,7 @@ public class Mang extends Application {
             this.mangkaib = false;
         }
 
-        if (this.mangkaib)
-            joonistaEkraan();
+
     }
 
     public void tegeleVoit(String tekst){
@@ -199,8 +210,6 @@ public class Mang extends Application {
         gc.setFill(Color.INDIGO);
         gc.fillText(tekst + " Voitis, mang labi", 300, 150);
         restartAken();
-
-        //TODO uus aken, mis annab v'imaluse uuesti alustada v]i v;ljuda
     }
 
     public void restartAken(){
@@ -268,11 +277,12 @@ public class Mang extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
         gc.fillRect(x, y, canvas.getWidth()/10, canvas.getHeight()/6);
-        gc.setFill(Color.INDIGO);
-        gc.strokeRect(x, y, canvas.getWidth()/10, canvas.getHeight()/6);
+        //gc.strokeRect(x, y, canvas.getWidth()/10, canvas.getHeight()/6);
+        Image pilt = new Image(kaart.getElement() + ".png");
+        gc.drawImage(pilt, x, y, canvas.getWidth()/10, canvas.getHeight()/6);
         gc.fillText(Integer.toString(kaart.getTugevus()), x+canvas.getWidth()/80, y+canvas.getHeight()/40);
         gc.fillText(kaart.erilineValja(), x+canvas.getWidth()/20, y+canvas.getHeight()/30);
-        gc.fillText(kaart.getElement(), x+canvas.getWidth()/80, y+canvas.getHeight()/20);
+        //gc.fillText(kaart.getElement(), x+canvas.getWidth()/80, y+canvas.getHeight()/20);
 
     }
 
