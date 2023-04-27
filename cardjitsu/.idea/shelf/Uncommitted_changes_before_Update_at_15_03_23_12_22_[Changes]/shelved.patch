@@ -1,0 +1,44 @@
+Index: src/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Main.java b/src/Kaart.java
+rename from src/Main.java
+rename to src/Kaart.java
+--- a/src/Main.java	
++++ b/src/Kaart.java	
+@@ -1,5 +1,29 @@
+-public class Main {
+-    public static void main(String[] args) {
+-        System.out.println("Hello world!");
++import java.util.ArrayList;
++import java.util.Random;
++
++public class Kaart {
++    //Teeme kaardi - kaardil on element ja number
++    private String[] elemendid = {"Tuli", "Vesi", "Lumi"};
++
++    //Kas yldse on vaja neid isendivalju ?
++    private String element;
++    private int arv;
++
++    public Kaart(String element, int arv) {
++        this.element = element;
++        this.arv = arv;
+     }
++
++    public ArrayList<Kaart> get_suvaline_kaart() {
++        Random r = new Random();
++        int suvaline_nr = r.nextInt(elemendid.length);
++        String suvaline_element = elemendid[suvaline_nr];
++
++        int suvaline_arv = (int) Math.floor(Math.random() * 12);
++
++        //paneme kokku
++        return
++
++    }
++
+ }
+\ No newline at end of file
