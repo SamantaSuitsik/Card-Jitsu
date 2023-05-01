@@ -13,12 +13,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
+import java.security.Timestamp;
 import java.util.HashMap;
 
 public class Mang extends Application {
 
     private String mangijanimi;
+    private File salvestus;
+    private int kaiguluger;
 
     private final Image background = new Image("taust5.png");
 
@@ -48,8 +51,12 @@ public class Mang extends Application {
 
     public void alustaUusMang(){
         this.setMangkaib(true);
+        kaiguluger = 0;
+        salvestus = new File("salvestus-"+ System.currentTimeMillis()+".txt");
         mangijakestev = "";
         vastasekestev = "";
+        mangijakaart = null;
+        vastasekaart = null;
         mangija = new Kasi();
         vastane = new Vastane();
         this.mangija.suvalisedKaardidKaes();
@@ -82,6 +89,9 @@ public class Mang extends Application {
         joonistaMangijaKaardid();
         joonistaEriEfektid();
         joonistaVoiduKogused();
+        canvas.getGraphicsContext2D().setFont(Font.font("Impact",40));
+        canvas.getGraphicsContext2D().fillText(mangijanimi, canvas.getWidth()*4/5,40 );
+        canvas.getGraphicsContext2D().setFont(Font.font("Impact",15));
         if (this.mangijakaart != null)
             joonistaKaart(this.mangijakaart, canvas.getWidth()/2, canvas.getHeight()/3);
         if (this.vastasekaart != null)
@@ -98,10 +108,11 @@ public class Mang extends Application {
             && x > canvas.getWidth()/4 - laius/2 && x < canvas.getWidth()/8 *6 + laius/2) {
             if (mangitud - (int) mangitud <= 0.8) {
                 if (this.mangija.getKaardid()[(int)mangitud].getElement().equals(vastasekestev)){
-                    System.out.println("See element on vastase poolt blokeeritud");
+                    //System.out.println("See element on vastase poolt blokeeritud");
                     gc.fillText("See element on blokeeritud ", 300, 100);
                 } else {
                     reageeri((int) mangitud);
+                    kaiguluger++;
                 }
             }
         }
@@ -157,13 +168,13 @@ public class Mang extends Application {
 
         //Kontrollib kumb kaart võidab
         int tulemus = this.mangijakaart.compareTo(this.vastasekaart);
-        if (tulemus == 0)
-            System.out.println("Jäite see round viiki.");
+        if (tulemus == 0){}
+            //System.out.println("Jäite see round viiki.");
         else if (tulemus > 0) {
-            System.out.println("Selle roundi võitsid");
+            //System.out.println("Selle roundi võitsid");
             this.mangijadict.put(this.mangijakaart.getElement(), this.mangijadict.get(this.mangijakaart.getElement())+1);
         }else {
-            System.out.println("Selle roundi kaotasid");
+            //System.out.println("Selle roundi kaotasid");
             this.vastanedict.put(this.vastasekaart.getElement(), this.vastanedict.get(this.vastasekaart.getElement()) + 1);
         }
 
@@ -172,13 +183,13 @@ public class Mang extends Application {
 
         //Vastasel ei leidu kaarti mis ei ole blokeeritud
         if (eiLeiduBlokeerimataElement(this.mangijakestev, this.vastane)){
-            System.out.println("Sinu võit! Vastasel ei ole kaarti, mida saaks käia");
+            //System.out.println("Sinu võit! Vastasel ei ole kaarti, mida saaks käia");
             tegeleVoit("Mangija");
             this.mangkaib = false;
         }
         //Mängijal ei leidu kaarti mis ei ole blokeeritud
         if (eiLeiduBlokeerimataElement(this.vastasekestev, this.mangija)){
-            System.out.println("Arvuti võitis! Sul ei ole kaarti, mida saaksid käia");
+            //System.out.println("Arvuti võitis! Sul ei ole kaarti, mida saaksid käia");
             tegeleVoit("Arvuti ");
             this.mangkaib = false;
         }
@@ -186,22 +197,22 @@ public class Mang extends Application {
 
         //Kontroll, kas on võidetud kaartidega kombinatisoon
         if (kasVoidetud(this.mangijadict)) {
-            System.out.println("Sinu võit! :)");
+            //System.out.println("Sinu võit! :)");
             tegeleVoit("Mangija");
             this.mangkaib = false;
         }
         if (kasVoidetud(this.vastanedict)) {
-            System.out.println("Arvuti võitis! :(");
+            //System.out.println("Arvuti võitis! :(");
             tegeleVoit("Arvuti ");
             this.mangkaib = false;
         }
+        //salvestaja();
 
 
     }
 
-    public void tegeleVoit(String tekst){
+    public void tegeleVoit(String tekst) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        //gc.setFill(Color.INDIGO);
         gc.fillText(tekst + " Voitis, mang labi", 300, 150);
         restartAken();
     }
@@ -267,7 +278,7 @@ public class Mang extends Application {
         Image pilt = new Image(kaart.getElement() + ".png");
         gc.drawImage(pilt, x, y, canvas.getWidth()/10, canvas.getHeight()/6);
         gc.fillText(Integer.toString(kaart.getTugevus()), x+canvas.getWidth()/80, y+canvas.getHeight()/34);
-        gc.fillText(kaart.erilineValja(), x+canvas.getWidth()/20, y+canvas.getHeight()/26);
+        gc.fillText(kaart.erilineValja(), x+canvas.getWidth()/25, y+canvas.getHeight()/26);
 
     }
 
@@ -313,6 +324,7 @@ public class Mang extends Application {
 
         valmis.setOnMouseClicked(event -> {
             this.mangijanimi = txt.getText();
+            joonistaEkraan();
             nimeks.hide();
         });
     }
@@ -426,5 +438,31 @@ public class Mang extends Application {
                 return false;
         }
         return true;
+    }
+
+    public void salvestaja(){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(salvestus, true))){
+            String kirjutatav = kaiguluger+":"+mangijanimi+",";
+            Kaart[] kaardid = this.mangija.getKaardid();
+            for (Kaart kaart : kaardid) {
+                kirjutatav = kirjutatav+kaart.getTugevus()+";"+kaart.getElement()+";"+kaart.getEriline()+"-";
+            }
+            kirjutatav = kirjutatav+mangijakaart.getTugevus()+";"+mangijakaart.getElement()+";"+mangijakaart.getEriline()+":"
+                    + mangijakestev +":"+mangijadict.get("tuli")+";"+mangijadict.get("vesi")+";"+mangijadict.get("lumi")+",";
+            Kaart[] vastasekaardid = this.mangija.getKaardid();
+            for (Kaart kaart : vastasekaardid) {
+                kirjutatav = kirjutatav+kaart.getTugevus()+";"+kaart.getElement()+";"+kaart.getEriline()+"-";
+            }
+            kirjutatav = kirjutatav+vastasekaart.getTugevus()+";"+vastasekaart.getElement()+";"+vastasekaart.getEriline()+":"
+                    + vastasekestev +":"+vastanedict.get("tuli")+";"+vastanedict.get("vesi")+";"+vastanedict.get("lumi");
+
+            bw.write(kirjutatav);
+            bw.newLine();
+
+        } catch (IOException e) {
+            System.out.println("katki");
+            //throw new RuntimeException(e);
+        }
+
     }
 }
