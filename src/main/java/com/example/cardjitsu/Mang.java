@@ -2,17 +2,15 @@ package com.example.cardjitsu;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,25 +18,32 @@ import java.util.HashMap;
 
 public class Mang extends Application {
 
+    private String mangijanimi;
+
+    private final Image background = new Image("taust5.png");
+
     private Kasi mangija;
     private Vastane vastane;
     private boolean mangkaib;
 
-    private Canvas canvas;
+    private final Canvas canvas;
     private String mangijakestev = "";
     private String vastasekestev = "";
     private Kaart vastasekaart;
     private Kaart mangijakaart;
-     private HashMap<String, Integer> mangijadict = new HashMap<>();
-    private HashMap<String, Integer> vastanedict = new HashMap<>();
+     private final HashMap<String, Integer> mangijadict = new HashMap<>();
+    private final HashMap<String, Integer> vastanedict = new HashMap<>();
 
     public Mang(){
         this.canvas = new Canvas(800, 600);
         canvas.setOnMouseClicked(event -> {
             handleClick(event.getX(), event.getY());
         });
+        canvas.getGraphicsContext2D().setFill(Color.WHITE);
 
+        nimeAken();
         alustaUusMang();
+
     }
 
     public void alustaUusMang(){
@@ -72,8 +77,8 @@ public class Mang extends Application {
     }
 
     public void joonistaEkraan(){
-        canvas.getGraphicsContext2D().setFill(Color.WHITE);
-        canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        canvas.getGraphicsContext2D().clearRect(0,0, canvas.getWidth(), canvas.getHeight());
+        canvas.getGraphicsContext2D().drawImage(background, 0, 0, canvas.getWidth(), canvas.getHeight());
         joonistaMangijaKaardid();
         joonistaEriEfektid();
         joonistaVoiduKogused();
@@ -85,9 +90,7 @@ public class Mang extends Application {
 
     public void handleClick(double x, double y) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(290,90, 300,20);
-        gc.setFill(Color.INDIGO);
+        //gc.setFill(Color.INDIGO);
         double yalgus = canvas.getHeight() * 3 / 4;
         int laius = (int)(canvas.getWidth()/10);
         double mangitud = ((8 * x + laius * 4) / canvas.getWidth()) - 2;
@@ -99,20 +102,11 @@ public class Mang extends Application {
                     gc.fillText("See element on blokeeritud ", 300, 100);
                 } else {
                     reageeri((int) mangitud);
-                    //gc.setFill(Color.INDIGO);
-                    //gc.fillRect(x, y, 10, 10);
                 }
             }
         }
     }
-
-    /*
-        int laius = (int)(canvas.getWidth()/10);
-        int korgus = (int)(canvas.getHeight()/6);
-        for (int i = 2; i <= 6; i++) {
-            joonistaKaart(mangija.getKaardid()[i-2],canvas.getWidth()/8 *i - laius/2, canvas.getHeight()*3/4);
-        }
-     */
+    
 
     public void reageeri(int indeks){
         this.mangijakaart = this.mangija.mangiKaart(indeks);
@@ -207,7 +201,7 @@ public class Mang extends Application {
 
     public void tegeleVoit(String tekst){
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.INDIGO);
+        //gc.setFill(Color.INDIGO);
         gc.fillText(tekst + " Voitis, mang labi", 300, 150);
         restartAken();
     }
@@ -220,6 +214,7 @@ public class Mang extends Application {
         Stage restart = new Stage();
         Scene res = new Scene(box, 150, 60);
         restart.setScene(res);
+        restart.setAlwaysOnTop(true);
         restart.show();
 
         uuesti.setOnMouseClicked(event -> {
@@ -233,19 +228,14 @@ public class Mang extends Application {
 
     public void joonistaEriEfektid(){
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        //gc.setFill(Color.WHITE);
-        //gc.fillRect(580, 190, 200, 100);
-        gc.setFill(Color.INDIGO);
+        gc.setFont(Font.font("Impact", 15));
         String[] teksid = efektidValja();
-        gc.fillText("Sinule : " + teksid[0], canvas.getWidth()*3/4, canvas.getHeight()/3);
-        gc.fillText("Vastasele : " + teksid[1], canvas.getWidth()*3/4, canvas.getHeight()/3+20);
+        gc.fillText("Sinule : " + teksid[0], canvas.getWidth()/2-canvas.getWidth()/10, 20);
+        gc.fillText("Vastasele : " + teksid[1], canvas.getWidth()/2-canvas.getWidth()/10, 40);
     }
 
     public void joonistaMangijaKaardid(){
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setStroke(Color.BLACK);
         int laius = (int)(canvas.getWidth()/10);
-        int korgus = (int)(canvas.getHeight()/6);
         for (int i = 2; i <= 6; i++) {
             joonistaKaart(mangija.getKaardid()[i-2],canvas.getWidth()/8 *i - laius/2, canvas.getHeight()*3/4);
         }
@@ -258,10 +248,7 @@ public class Mang extends Application {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        //gc.setFill(Color.WHITE);
-        //gc.fillRect(480, 390, 300, 50);
-        gc.setFill(Color.INDIGO);
-
+        //gc.setFill(Color.INDIGO);
 
         String tekst1 = "   " + tuleemoji + " : " + this.mangijadict.get("tuli") + "  "+
                 veeemoji + " : " + this.mangijadict.get("vesi") + "  " + lumeemoji + " : " + this.mangijadict.get("lumi");
@@ -269,29 +256,24 @@ public class Mang extends Application {
         String tekst2 = "   " + tuleemoji + " : " + this.vastanedict.get("tuli") + "  "+
                 veeemoji + " : " + this.vastanedict.get("vesi") + "  " + lumeemoji + " : " + this.vastanedict.get("lumi");
 
-        gc.fillText("Sinule : " + tekst1, canvas.getWidth()-300, canvas.getHeight()*2/3);
-        gc.fillText("Vastasele : " + tekst2, canvas.getWidth()-300, canvas.getHeight()*2/3+20);
+        gc.fillText("Sinule : ", canvas.getWidth()-canvas.getWidth()/5, canvas.getHeight()/7);
+        gc.fillText(tekst1, canvas.getWidth()-canvas.getWidth()/5, canvas.getHeight()/7+20);
+        gc.fillText("Vastasele : ", canvas.getWidth()/40, canvas.getHeight()/7);
+        gc.fillText(tekst2, canvas.getWidth()/40, canvas.getHeight()/7+20);
     }
 
     public void joonistaKaart(Kaart kaart, double x, double y){
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(x, y, canvas.getWidth()/10, canvas.getHeight()/6);
-        //gc.strokeRect(x, y, canvas.getWidth()/10, canvas.getHeight()/6);
         Image pilt = new Image(kaart.getElement() + ".png");
         gc.drawImage(pilt, x, y, canvas.getWidth()/10, canvas.getHeight()/6);
-        gc.fillText(Integer.toString(kaart.getTugevus()), x+canvas.getWidth()/80, y+canvas.getHeight()/40);
-        gc.fillText(kaart.erilineValja(), x+canvas.getWidth()/20, y+canvas.getHeight()/30);
-        //gc.fillText(kaart.getElement(), x+canvas.getWidth()/80, y+canvas.getHeight()/20);
+        gc.fillText(Integer.toString(kaart.getTugevus()), x+canvas.getWidth()/80, y+canvas.getHeight()/34);
+        gc.fillText(kaart.erilineValja(), x+canvas.getWidth()/20, y+canvas.getHeight()/26);
 
     }
 
     @Override
     public void start(Stage peaLava) throws IOException {
         Scene s = new Scene(getMainPane());
-
-        // Lisame CSS'iga taustapildi ja määrame, kui suureks see pilt peaks venitatama.
-        //s.getRoot().setStyle("-fx-background-image: url('background.png'); -fx-background-size: 800px 600px;");
 
         s.widthProperty().addListener(event -> {
             canvas.setWidth(s.getWidth());
@@ -301,6 +283,8 @@ public class Mang extends Application {
             canvas.setHeight(s.getHeight());
             joonistaEkraan();
         });
+
+
         peaLava.setTitle("Card-Jitsu");
         peaLava.setMinWidth(400.0);
         peaLava.setScene(s);
@@ -314,6 +298,24 @@ public class Mang extends Application {
 
     public static void main(String[] args) throws InterruptedException {
         launch(args);}
+
+
+    public void nimeAken(){
+        FlowPane fp = new FlowPane();
+        Stage nimeks = new Stage();
+        Scene nimetseen = new Scene(fp, 200, 200);
+        TextField txt = new TextField();
+        Button valmis = new Button("Sisesta");
+        fp.getChildren().addAll(txt, valmis);
+        nimeks.setScene(nimetseen);
+        nimeks.setAlwaysOnTop(true);
+        nimeks.show();
+
+        valmis.setOnMouseClicked(event -> {
+            this.mangijanimi = txt.getText();
+            nimeks.hide();
+        });
+    }
 
 
     //Kontrollib võitu
