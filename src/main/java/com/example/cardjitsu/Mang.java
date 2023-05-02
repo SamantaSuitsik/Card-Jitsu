@@ -516,7 +516,6 @@ public class Mang extends Application {
 
     public Kaart[] kaardidListist(String[] kaardid){
         Kaart[] kaardidhoidja = new Kaart[6];
-        Kaart lisakaart = null;
         for (int j = 0; j < 6; j++) {
             String[] kaardinf = kaardid[j].split(";");
             Kaart kaarttemp = new Kaart(Integer.parseInt(kaardinf[0]), kaardinf[1]);
