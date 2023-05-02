@@ -33,8 +33,8 @@ public class Mang extends Application {
     private String vastasekestev = "";
     private Kaart vastasekaart;
     private Kaart mangijakaart;
-     private final HashMap<String, Integer> mangijadict = new HashMap<>();
-    private final HashMap<String, Integer> vastanedict = new HashMap<>();
+     private HashMap<String, Integer> mangijadict = new HashMap<>();
+    private HashMap<String, Integer> vastanedict = new HashMap<>();
 
     public Mang(){
         this.canvas = new Canvas(800, 600);
@@ -74,11 +74,19 @@ public class Mang extends Application {
 
 
     private Pane getMainPane() {
-        Pane pane = new FlowPane();
-        //Pane buttonPane = this.getButtonPane();
-        pane.getChildren().addAll(canvas);
+        Pane pane = new AnchorPane();
+        Button button = new Button("Undo");
+
+        button.setOnMouseClicked(event -> {
+            laadija();
+            System.out.println("uhke");
+            joonistaEkraan();
+        });
+
+        pane.getChildren().addAll(canvas, button);
         return pane;
     }
+
 
     public void joonistaEkraan(){
         canvas.getGraphicsContext2D().clearRect(0,0, canvas.getWidth(), canvas.getHeight());
@@ -204,7 +212,7 @@ public class Mang extends Application {
             tegeleVoit("Arvuti võitis!");
             this.mangkaib = false;
         }
-        //salvestaja();
+        salvestaja();
 
 
     }
@@ -213,6 +221,8 @@ public class Mang extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFont(Font.font("Impact",25));
         gc.fillText(teade, canvas.getWidth()/3, canvas.getHeight()/4);
+        gc.setStroke(Color.BLACK);
+        gc.strokeText(teade, canvas.getWidth()/3, canvas.getHeight()/4);
         gc.setFont(Font.font("Impact", 15));
     }
 
@@ -326,6 +336,8 @@ public class Mang extends Application {
 
         valmis.setOnMouseClicked(event -> {
             this.mangijanimi = txt.getText();
+            if ("".equals(this.mangijanimi))
+                this.mangijanimi = "Mangija";
             joonistaEkraan();
             nimeks.hide();
         });
@@ -463,5 +475,65 @@ public class Mang extends Application {
             //throw new RuntimeException(e);
         }
 
+    }
+
+    public void laadija(){
+        try (BufferedReader br = new BufferedReader(new FileReader(salvestus))){
+            for (int i = 0; i < this.kaiguluger; i++) {
+                String rida = br.readLine();
+                rida = rida.split("\n")[0];
+                String[] info = rida.split(",");
+                System.out.println(info[0].split(":")[0]);
+                System.out.println(this.kaiguluger);
+                if (info[0].split(":")[0].equals(Integer.toString(this.kaiguluger-1))){
+                    System.out.println(this.kaiguluger + " tuli siia");
+                    this.mangijanimi = info[0].split(":")[1];
+                    String[] mangija = info[1].split(":");
+                    this.mangijakestev = mangija[1];
+                    String[] dict = mangija[2].split(";");
+                    String[] kaardid = mangija[0].split("-");
+                    Kaart[] osad = kaardidListist(kaardid);
+                    this.mangija.setKaardid(new Kaart[]{osad[0], osad[1], osad[2], osad[3], osad[4]});
+                    this.mangijakaart = osad[5];
+                    this.mangijadict = dictListist(dict);
+
+                    String[] vastaseinfo = info[2].split(":");
+                    this.vastasekestev = vastaseinfo[1];
+                    String[] vastasdict = vastaseinfo[2].split(";");
+                    String[] vastasekaardid = vastaseinfo[0].split("-");
+                    Kaart[] vastaseosad = kaardidListist(vastasekaardid);
+                    this.vastane.setKaardid(new Kaart[]{vastaseosad[0], vastaseosad[1], vastaseosad[2], vastaseosad[3], vastaseosad[4]});
+                    this.vastasekaart = vastaseosad[5];
+                    this.vastanedict = dictListist(vastasdict);
+                    this.kaiguluger--;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("katki");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Kaart[] kaardidListist(String[] kaardid){
+        Kaart[] kaardidhoidja = new Kaart[6];
+        Kaart lisakaart = null;
+        for (int j = 0; j < 6; j++) {
+            String[] kaardinf = kaardid[j].split(";");
+            Kaart kaarttemp = new Kaart(Integer.parseInt(kaardinf[0]), kaardinf[1]);
+            if (kaardinf.length == 3) {
+                kaarttemp.setEriline(kaardinf[2]);
+            }
+            kaardidhoidja[j] = kaarttemp;
+        }
+
+        return kaardidhoidja;
+    }
+
+    public HashMap<String, Integer> dictListist(String[] antuddict){
+        HashMap<String, Integer> dict = new HashMap<>();
+        dict.put("tuli", Integer.valueOf(antuddict[0]));
+        dict.put("vesi", Integer.valueOf(antuddict[1]));
+        dict.put("lumi", Integer.valueOf(antuddict[2]));
+        return dict;
     }
 }
