@@ -14,6 +14,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Mang extends Application {
@@ -79,7 +82,7 @@ public class Mang extends Application {
 
         button.setOnMouseClicked(event -> {
             laadija();
-            System.out.println("uhke");
+            //System.out.println("uhke");
             joonistaEkraan();
         });
 
@@ -96,6 +99,7 @@ public class Mang extends Application {
         joonistaVoiduKogused();
         canvas.getGraphicsContext2D().setFont(Font.font("Impact",40));
         canvas.getGraphicsContext2D().fillText(mangijanimi, canvas.getWidth()*4/5,40 );
+        canvas.getGraphicsContext2D().fillText(String.valueOf(this.kaiguluger), canvas.getWidth()-30, canvas.getHeight()-40);
         canvas.getGraphicsContext2D().setFont(Font.font("Impact",15));
         if (this.mangijakaart != null)
             joonistaKaart(this.mangijakaart, canvas.getWidth()/2+canvas.getWidth()/20, canvas.getHeight()/3);
@@ -118,11 +122,10 @@ public class Mang extends Application {
             && x > canvas.getWidth()/4 - laius/2 && x < canvas.getWidth()/8 *6 + laius/2) {
             if (mangitud - (int) mangitud <= 0.8) {
                 if (this.mangija.getKaardid()[(int)mangitud].getElement().equals(vastasekestev)){
-                    //System.out.println("See element on vastase poolt blokeeritud");
                     gc.fillText("See element on blokeeritud ", 300, 100);
                 } else {
-                    reageeri((int) mangitud);
                     kaiguluger++;
+                    reageeri((int) mangitud);
                 }
             }
         }
@@ -130,6 +133,7 @@ public class Mang extends Application {
     
 
     public void reageeri(int indeks){
+        salvestaja();
         this.mangijakaart = this.mangija.mangiKaart(indeks);
 
         //Kui eriline võime oli kaardi tugevust muuta teeb selle siin ära
@@ -212,7 +216,7 @@ public class Mang extends Application {
             tegeleVoit("Arvuti võitis!");
             this.mangkaib = false;
         }
-        salvestaja();
+
 
 
     }
@@ -454,18 +458,45 @@ public class Mang extends Application {
     }
 
     public void salvestaja(){
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(salvestus, true))){
+        ArrayList<String> vanadread = new ArrayList<>();
+        if (Files.exists(Path.of(salvestus))){
+            try (BufferedReader br = new BufferedReader(new FileReader(salvestus))){
+                for (int i = 0; i < this.kaiguluger-1; i++) {
+                    String rida = br.readLine();
+                    if (rida == null)
+                        break;
+                    vanadread.add(rida);
+                }
+            } catch (IOException e) {
+                System.out.println("katki aga siin");
+                //throw new RuntimeException(e);
+            }
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(salvestus))){
+            for (String s : vanadread) {
+                bw.write(s);
+                bw.newLine();
+            }
             StringBuilder kirjutatav = new StringBuilder(kaiguluger + ":" + mangijanimi + ",");
             Kaart[] kaardid = this.mangija.getKaardid();
             for (Kaart kaart : kaardid) {
                 kirjutatav.append(kaart.getTugevus()).append(";").append(kaart.getElement()).append(";").append(kaart.getEriline()).append("-");
             }
-            kirjutatav.append(mangijakaart.getTugevus()).append(";").append(mangijakaart.getElement()).append(";").append(mangijakaart.getEriline()).append(":").append(mangijakestev).append(":").append(mangijadict.get("tuli")).append(";").append(mangijadict.get("vesi")).append(";").append(mangijadict.get("lumi")).append(",");
+            if (this.mangijakaart == null)
+                kirjutatav.append(99).append(";").append("tuli").append(";").append((String) null);
+            else
+                kirjutatav.append(mangijakaart.getTugevus()).append(";").append(mangijakaart.getElement()).append(";").append(mangijakaart.getEriline());
+            kirjutatav.append(":").append(mangijakestev).append(":").append(mangijadict.get("tuli")).append(";").append(mangijadict.get("vesi")).append(";").append(mangijadict.get("lumi")).append(",");
             Kaart[] vastasekaardid = this.mangija.getKaardid();
             for (Kaart kaart : vastasekaardid) {
                 kirjutatav.append(kaart.getTugevus()).append(";").append(kaart.getElement()).append(";").append(kaart.getEriline()).append("-");
             }
-            kirjutatav.append(vastasekaart.getTugevus()).append(";").append(vastasekaart.getElement()).append(";").append(vastasekaart.getEriline()).append(":").append(vastasekestev).append(":").append(vastanedict.get("tuli")).append(";").append(vastanedict.get("vesi")).append(";").append(vastanedict.get("lumi"));
+            if (this.vastasekaart == null)
+                kirjutatav.append(99).append(";").append("tuli").append(";").append((String) null);
+            else
+                kirjutatav.append(vastasekaart.getTugevus()).append(";").append(vastasekaart.getElement()).append(";").append(vastasekaart.getEriline());
+            kirjutatav.append(":").append(vastasekestev).append(":").append(vastanedict.get("tuli")).append(";").append(vastanedict.get("vesi")).append(";").append(vastanedict.get("lumi"));
 
             bw.write(kirjutatav.toString());
             bw.newLine();
@@ -483,10 +514,10 @@ public class Mang extends Application {
                 String rida = br.readLine();
                 rida = rida.split("\n")[0];
                 String[] info = rida.split(",");
-                System.out.println(info[0].split(":")[0]);
-                System.out.println(this.kaiguluger);
-                if (info[0].split(":")[0].equals(Integer.toString(this.kaiguluger-1))){
-                    System.out.println(this.kaiguluger + " tuli siia");
+                //System.out.println(info[0].split(":")[0]);
+                //System.out.println(this.kaiguluger);
+                if (info[0].split(":")[0].equals(Integer.toString(this.kaiguluger))){
+                    //System.out.println(this.kaiguluger + " tuli siia");
                     this.mangijanimi = info[0].split(":")[1];
                     String[] mangija = info[1].split(":");
                     this.mangijakestev = mangija[1];
@@ -494,7 +525,10 @@ public class Mang extends Application {
                     String[] kaardid = mangija[0].split("-");
                     Kaart[] osad = kaardidListist(kaardid);
                     this.mangija.setKaardid(new Kaart[]{osad[0], osad[1], osad[2], osad[3], osad[4]});
-                    this.mangijakaart = osad[5];
+                    if (osad[5].getTugevus() == 99)
+                        this.mangijakaart = null;
+                    else
+                        this.mangijakaart = osad[5];
                     this.mangijadict = dictListist(dict);
 
                     String[] vastaseinfo = info[2].split(":");
@@ -503,7 +537,10 @@ public class Mang extends Application {
                     String[] vastasekaardid = vastaseinfo[0].split("-");
                     Kaart[] vastaseosad = kaardidListist(vastasekaardid);
                     this.vastane.setKaardid(new Kaart[]{vastaseosad[0], vastaseosad[1], vastaseosad[2], vastaseosad[3], vastaseosad[4]});
-                    this.vastasekaart = vastaseosad[5];
+                    if (vastaseosad[5].getTugevus() == 99)
+                        this.vastasekaart = null;
+                    else
+                        this.vastasekaart = vastaseosad[5];
                     this.vastanedict = dictListist(vastasdict);
                     this.kaiguluger--;
                 }
