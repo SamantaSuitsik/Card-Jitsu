@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -21,6 +22,8 @@ import java.util.HashMap;
 
 public class Mang extends Application {
 
+
+    //Kõik muutujad, mis määravad mängu seisu
     private String mangijanimi;
     private String salvestus;
     private int kaiguluger;
@@ -40,18 +43,23 @@ public class Mang extends Application {
     private HashMap<String, Integer> vastanedict = new HashMap<>();
 
     public Mang(){
+        //Tava meetod, mis javaFX käivitamisel kutsutakse
         this.canvas = new Canvas(800, 600);
+        //Mänguaknal click tehes saadetakse selle koordinaadid edasi handleClickile
         canvas.setOnMouseClicked(event -> handleClick(event.getX(), event.getY()));
         canvas.getGraphicsContext2D().setFill(Color.WHITE);
 
+        //alustusmeetodid
         nimeAken();
         alustaUusMang();
 
     }
 
+    //Meetod, mis initsialiseerib kõik vajalikud muutujad
     public void alustaUusMang(){
         this.setMangkaib(true);
         kaiguluger = 0;
+        //Salvestuse fail on määratud hetke ajaga
         salvestus = "salvestus-"+ System.currentTimeMillis()+".txt";
         mangijakestev = "";
         vastasekestev = "";
@@ -66,6 +74,7 @@ public class Mang extends Application {
 
     }
 
+    //Meetod, mis initsialiseerib vajalikud mapid
     public void setdictalgne(){
         this.mangijadict.put("tuli", 0);
         this.mangijadict.put("vesi", 0);
@@ -76,13 +85,13 @@ public class Mang extends Application {
     }
 
 
+    //Meetod, mis seab üldise javafx elementide paigutuse
     private Pane getMainPane() {
         Pane pane = new AnchorPane();
         Button button = new Button("Undo");
 
         button.setOnMouseClicked(event -> {
             laadija();
-            //System.out.println("uhke");
             joonistaEkraan();
         });
 
@@ -91,6 +100,7 @@ public class Mang extends Application {
     }
 
 
+    //Meetod, mis uuendab kõik ekraanil oleva
     public void joonistaEkraan(){
         canvas.getGraphicsContext2D().clearRect(0,0, canvas.getWidth(), canvas.getHeight());
         canvas.getGraphicsContext2D().drawImage(background, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -99,7 +109,7 @@ public class Mang extends Application {
         joonistaVoiduKogused();
         canvas.getGraphicsContext2D().setFont(Font.font("Impact",40));
         canvas.getGraphicsContext2D().fillText(mangijanimi, canvas.getWidth()*4/5,40 );
-        canvas.getGraphicsContext2D().fillText(String.valueOf(this.kaiguluger), canvas.getWidth()-30, canvas.getHeight()-40);
+        //canvas.getGraphicsContext2D().fillText(String.valueOf(this.kaiguluger), canvas.getWidth()-30, canvas.getHeight()-40);
         canvas.getGraphicsContext2D().setFont(Font.font("Impact",15));
         if (this.mangijakaart != null)
             joonistaKaart(this.mangijakaart, canvas.getWidth()/2+canvas.getWidth()/20, canvas.getHeight()/3);
@@ -107,23 +117,30 @@ public class Mang extends Application {
             joonistaKaart(this.vastasekaart, canvas.getWidth()/2-canvas.getWidth()/8, canvas.getHeight()/3);
     }
 
+    //joonistaEkraan teine variant, mis tagastab mängijale ekraani keskele teate
     public void joonistaEkraan(String teade){
         joonistaEkraan();
         teadeMangijale(teade);
     }
 
+
+    //Meetod, mis arvutab hiire klõpsu koordinaatide põhjal välja, mis kaardile vajutati ja kas see on sobiv käik
     public void handleClick(double x, double y) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        //gc.setFill(Color.INDIGO);
+
         double yalgus = canvas.getHeight() * 3 / 4;
         int laius = (int)(canvas.getWidth()/10);
+        //arvutab mis kaardi peale vajutati
         double mangitud = ((8 * x + laius * 4) / canvas.getWidth()) - 2;
+        //kontroll, et click oleks kaardi sees
         if (y > yalgus && y < yalgus + canvas.getHeight() / 6 && this.mangkaib
             && x > canvas.getWidth()/4 - laius/2 && x < canvas.getWidth()/8 *6 + laius/2) {
             if (mangitud - (int) mangitud <= 0.8) {
+                //kui klikitud kaardi element on blokeeritud siis teavitatakse mängijat sellest
                 if (this.mangija.getKaardid()[(int)mangitud].getElement().equals(vastasekestev)){
                     gc.fillText("See element on blokeeritud ", 300, 100);
                 } else {
+                    //kui klikitud kaart sobis siis saadetakse valitud kaardi indeks edasi main loopile
                     kaiguluger++;
                     reageeri((int) mangitud);
                 }
@@ -131,8 +148,9 @@ public class Mang extends Application {
         }
     }
     
-
+    //Mängu main loop
     public void reageeri(int indeks){
+        //käigu alguses salvestatakse "eelmine" käik
         salvestaja();
         this.mangijakaart = this.mangija.mangiKaart(indeks);
 
@@ -192,8 +210,6 @@ public class Mang extends Application {
                 joonistaEkraan("Selle roundi kaotasid");
         }
 
-        //if (this.mangkaib)
-        //    joonistaEkraan();
 
         //Vastasel ei leidu kaarti mis ei ole blokeeritud
         if (eiLeiduBlokeerimataElement(this.mangijakestev, this.vastane)){
@@ -221,6 +237,7 @@ public class Mang extends Application {
 
     }
 
+    //Meetod, mis annab mängijale teate
     public void teadeMangijale(String teade){
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFont(Font.font("Impact",25));
@@ -230,11 +247,13 @@ public class Mang extends Application {
         gc.setFont(Font.font("Impact", 15));
     }
 
+    //Meetod juhuks kui mäng on võidetud/läbi
     public void tegeleVoit(String tekst) {
         joonistaEkraan(tekst);
         restartAken();
     }
 
+    //Aken, mis näidatakse mängijale, kui mäng on läbi
     public void restartAken(){
         Button uuesti = new Button("Uuesti?");
         Button exit = new Button("Exit");
@@ -246,6 +265,7 @@ public class Mang extends Application {
         restart.setAlwaysOnTop(true);
         restart.show();
 
+        //Uuesti nupul vajutades alustatakse uus mäng
         uuesti.setOnMouseClicked(event -> {
             alustaUusMang();
             restart.hide();
@@ -253,6 +273,7 @@ public class Mang extends Application {
         exit.setOnMouseClicked(event -> Platform.exit());
     }
 
+    //Joonistab ekraanile hetkel kehtivad eriefektid
     public void joonistaEriEfektid(){
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFont(Font.font("Impact", 15));
@@ -261,6 +282,7 @@ public class Mang extends Application {
         gc.fillText("Vastasele : " + teksid[1], canvas.getWidth()/2-canvas.getWidth()/10, 40);
     }
 
+    //Joonistab ekraanile mängija kaardid
     public void joonistaMangijaKaardid(){
         int laius = (int)(canvas.getWidth()/10);
         for (int i = 2; i <= 6; i++) {
@@ -268,14 +290,13 @@ public class Mang extends Application {
         }
     }
 
+    //Joonistab ekraanile mitu korda on iga mängija mis elemendiga võitnud
     public void joonistaVoiduKogused(){
         String tuleemoji = "\uD83D\uDD25";
         String veeemoji = "\uD83D\uDCA7";
         String lumeemoji = "❄";
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        //gc.setFill(Color.INDIGO);
 
         String tekst1 = "   " + tuleemoji + " : " + this.mangijadict.get("tuli") + "  "+
                 veeemoji + " : " + this.mangijadict.get("vesi") + "  " + lumeemoji + " : " + this.mangijadict.get("lumi");
@@ -289,6 +310,7 @@ public class Mang extends Application {
         gc.fillText(tekst2, canvas.getWidth()/40, canvas.getHeight()/7+20);
     }
 
+    //Meetod, ühe kaardi joonistamiseks kindlale koordinaadile
     public void joonistaKaart(Kaart kaart, double x, double y){
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Image pilt = new Image(kaart.getElement() + ".png");
@@ -298,6 +320,8 @@ public class Mang extends Application {
 
     }
 
+
+    //Peamine JavaFX meetod, kus seatakse lava ja tseen, koos akna suuruse muutmisega
     @Override
     public void start(Stage peaLava) {
         Scene s = new Scene(getMainPane());
@@ -319,25 +343,47 @@ public class Mang extends Application {
 
     }
 
+    //Meetod, mängu käimasoleku muutmiseks
     public void setMangkaib(boolean mangkaib) {
         this.mangkaib = mangkaib;
     }
 
+
+    //Main meetod, mis alustab kogu mängu
     public static void main(String[] args) {
         launch(args);}
 
 
+    //Aken, kus on algne õpetus ja mängija nimesisestus (sest peab ju olema mingi klaviatuuri kasutus)
     public void nimeAken(){
         FlowPane fp = new FlowPane();
         Stage nimeks = new Stage();
-        Scene nimetseen = new Scene(fp, 200, 200);
+        Scene nimetseen = new Scene(fp, 600, 300);
+        Text abijutt = new Text();
+        abijutt.setText("""
+                    Mängijale on ette antud 5 kaarti, mille hulgast valitakse üks, mis käiakse välja.
+                    Vastane (ehk arvuti) käib samal ajal oma kaardi.
+                    Ühel kaardil on kindel tugevus (arv 2-st 12-ni) ja element (tuli, vesi või lumi).
+                    Välja käidud kaartidest võidab see, mis on elemendi või numbri poolest tugevam:
+                    Tuli võidab lume, Lumi võidab vee, Vesi võidab tule.
+                    Kui käidud kaartidel on sama element võidab see, kelle kaardil on suurem number. \s
+                    Kui number ja element on mõlemal samad, siis on tegemist viigiga.
+                    Peale käiku antakse võitjale tema käidud kaart tagasi, mis läheb võidetud kaartide komplekti.
+                    Kui käik lõppes viigiga, ei saa kumbki mängija kaarti.
+                    Mängija, kes saab esimesena komplektis kokku nii tule, vee kui ka lume elemendiga kaardid, on võitnud.
+                    Kaartidel võivad olla ka efektid (üleval paremal), mis mõjutavad võiduvõimalust või järgmist käiku:
+                    Kui vastasel on kõik kaardid blokeeritud, kaotab ta mängu automaatselt.
+                \s
+                \s
+                 Sisesta mängija nimi:\s""");
         TextField txt = new TextField();
         Button valmis = new Button("Sisesta");
-        fp.getChildren().addAll(txt, valmis);
+        fp.getChildren().addAll(abijutt, txt, valmis);
         nimeks.setScene(nimetseen);
         nimeks.setAlwaysOnTop(true);
         nimeks.show();
 
+        //Nupule vajutusel seatakse mängija nimi
         valmis.setOnMouseClicked(event -> {
             this.mangijanimi = txt.getText();
             if ("".equals(this.mangijanimi))
@@ -457,8 +503,11 @@ public class Mang extends Application {
         return true;
     }
 
+
+    //Meetod, mis salvestab mänguseisundi ja eelnevad käigud faili, sobivas formaadis
     public void salvestaja(){
         ArrayList<String> vanadread = new ArrayList<>();
+        //Teeb kindlaks, et ei tekiks ridade kordusi ja undoga ei hakkaks fail branchima
         if (Files.exists(Path.of(salvestus))){
             try (BufferedReader br = new BufferedReader(new FileReader(salvestus))){
                 for (int i = 0; i < this.kaiguluger-1; i++) {
@@ -473,6 +522,7 @@ public class Mang extends Application {
             }
         }
 
+        //kirjutab uuele reale mänguseisu
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(salvestus))){
             for (String s : vanadread) {
                 bw.write(s);
@@ -480,14 +530,19 @@ public class Mang extends Application {
             }
             StringBuilder kirjutatav = new StringBuilder(kaiguluger + ":" + mangijanimi + ",");
             Kaart[] kaardid = this.mangija.getKaardid();
+            //kirjutab kõik käes olevad kaardid
             for (Kaart kaart : kaardid) {
                 kirjutatav.append(kaart.getTugevus()).append(";").append(kaart.getElement()).append(";").append(kaart.getEriline()).append("-");
             }
+
+            //kui hetkel pole kaarti mängitud lisatakse faili kaart tugevusega 99, et hiljem see kerge leida oleks
             if (this.mangijakaart == null)
                 kirjutatav.append(99).append(";").append("tuli").append(";").append((String) null);
             else
                 kirjutatav.append(mangijakaart.getTugevus()).append(";").append(mangijakaart.getElement()).append(";").append(mangijakaart.getEriline());
             kirjutatav.append(":").append(mangijakestev).append(":").append(mangijadict.get("tuli")).append(";").append(mangijadict.get("vesi")).append(";").append(mangijadict.get("lumi")).append(",");
+
+            //kordab vastase jaoks kõike
             Kaart[] vastasekaardid = this.mangija.getKaardid();
             for (Kaart kaart : vastasekaardid) {
                 kirjutatav.append(kaart.getTugevus()).append(";").append(kaart.getElement()).append(";").append(kaart.getEriline()).append("-");
@@ -508,16 +563,18 @@ public class Mang extends Application {
 
     }
 
+
+    //Fail, mis loeb vajaliku rea failist tagasi
     public void laadija(){
         try (BufferedReader br = new BufferedReader(new FileReader(salvestus))){
             for (int i = 0; i < this.kaiguluger; i++) {
                 String rida = br.readLine();
                 rida = rida.split("\n")[0];
                 String[] info = rida.split(",");
-                //System.out.println(info[0].split(":")[0]);
-                //System.out.println(this.kaiguluger);
+
+                //Leiab eelmise käigu
                 if (info[0].split(":")[0].equals(Integer.toString(this.kaiguluger))){
-                    //System.out.println(this.kaiguluger + " tuli siia");
+
                     this.mangijanimi = info[0].split(":")[1];
                     String[] mangija = info[1].split(":");
                     this.mangijakestev = mangija[1];
@@ -525,6 +582,7 @@ public class Mang extends Application {
                     String[] kaardid = mangija[0].split("-");
                     Kaart[] osad = kaardidListist(kaardid);
                     this.mangija.setKaardid(new Kaart[]{osad[0], osad[1], osad[2], osad[3], osad[4]});
+
                     if (osad[5].getTugevus() == 99)
                         this.mangijakaart = null;
                     else
@@ -537,6 +595,7 @@ public class Mang extends Application {
                     String[] vastasekaardid = vastaseinfo[0].split("-");
                     Kaart[] vastaseosad = kaardidListist(vastasekaardid);
                     this.vastane.setKaardid(new Kaart[]{vastaseosad[0], vastaseosad[1], vastaseosad[2], vastaseosad[3], vastaseosad[4]});
+
                     if (vastaseosad[5].getTugevus() == 99)
                         this.vastasekaart = null;
                     else
@@ -546,11 +605,12 @@ public class Mang extends Application {
                 }
             }
         } catch (IOException e) {
-            System.out.println("katki");
+            joonistaEkraan("Ei saa käiku tagasi võtta");
             throw new RuntimeException(e);
         }
     }
 
+    //Tekitab kaardiinfost Kaardi objektid
     public Kaart[] kaardidListist(String[] kaardid){
         Kaart[] kaardidhoidja = new Kaart[6];
         for (int j = 0; j < 6; j++) {
@@ -565,6 +625,7 @@ public class Mang extends Application {
         return kaardidhoidja;
     }
 
+    //Tekitab dict infost Map objekti
     public HashMap<String, Integer> dictListist(String[] antuddict){
         HashMap<String, Integer> dict = new HashMap<>();
         dict.put("tuli", Integer.valueOf(antuddict[0]));
