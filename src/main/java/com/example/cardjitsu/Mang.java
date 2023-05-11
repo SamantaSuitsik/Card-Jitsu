@@ -2,12 +2,15 @@ package com.example.cardjitsu;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -390,6 +393,16 @@ public class Mang extends Application {
                 this.mangijanimi = "Mangija";
             joonistaEkraan();
             nimeks.hide();
+        });
+        txt.setOnKeyPressed(event ->  {
+                if (event.getCode().equals(KeyCode.ENTER)) {
+                    this.mangijanimi = txt.getText();
+                    if ("".equals(this.mangijanimi))
+                        this.mangijanimi = "Mangija";
+                    joonistaEkraan();
+                    nimeks.hide();
+                }
+
         });
     }
 
